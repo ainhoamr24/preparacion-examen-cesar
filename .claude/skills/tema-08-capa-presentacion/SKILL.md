@@ -1,26 +1,26 @@
-<!-- Skill principal del Tema 08. Define el conocimiento sobre controladores REST y respuestas HTTP sin introducir modelos no respaldados por el proyecto. -->
+<!-- Main skill for Topic 08. Defines knowledge about REST controllers and HTTP responses without introducing models not backed by the project. -->
 ---
 name: tema-08-capa-presentacion
-description: Conocimiento del Tema 08 sobre la capa de presentación. Cubre controladores REST, `ResponseEntity`, validación de entrada y manejo básico de errores. Cárgalo para cualquier pregunta o implementación sobre controladores REST, manejo de excepciones o respuestas HTTP.
+description: Knowledge for Topic 08 on the presentation layer. Covers REST controllers, `ResponseEntity`, input validation and basic error handling. Load it for any question or implementation about REST controllers, exception handling or HTTP responses.
 ---
-# Tema 08 — Capa de Presentación
-## Ficheros de este skill
-| Fichero | Contenido |
-|---------|-----------|
-| `references/response-entity-advice.md` | Referencia de `ResponseEntity`, respuestas HTTP y excepciones simples |
-| `examples/controller-completo.md` | Ejemplo completo de controlador REST alineado con la referencia |
+# Topic 08 — Presentation Layer
+## Files in this skill
+| File | Content |
+|------|---------|
+| `references/response-entity-advice.md` | Reference for `ResponseEntity`, HTTP responses and simple exceptions |
+| `examples/controller-completo.md` | Complete REST controller example aligned with the reference |
 ---
-## Responsabilidad
-La capa de presentación:
-- recibe solicitudes HTTP
-- valida datos de entrada básicos
-- delega en servicios
-- devuelve respuestas JSON con el código correcto
+## Responsibility
+The presentation layer:
+- receives HTTP requests
+- validates basic input data
+- delegates to services
+- returns JSON responses with the correct code
 
-**MUST NOT** contener lógica de negocio ni acceder a persistencia directamente.
+**MUST NOT** contain business logic or access persistence directly.
 ---
-## Reglas
-- Endpoints bajo `/api`.
-- Controladores en `controller/`.
-- Respuestas con `ResponseEntity` cuando el código HTTP necesite expresarse de forma explícita.
-- Evitar `try/catch` de negocio dentro del controlador.
+## Rules
+- Endpoints under `/api`.
+- Controllers in `controller/`.
+- Responses with `ResponseEntity` when the HTTP code needs to be expressed explicitly.
+- Avoid business `try/catch` inside the controller.

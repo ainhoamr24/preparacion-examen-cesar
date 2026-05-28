@@ -1,6 +1,6 @@
-<!-- Ejemplo del Tema 06. Implementación completa del dominio Book: modelo rico con precio calculado y addAuthor con validación, servicio con interfaz e implementación usando el mapper, y tests unitarios con Mockito verificando caso de éxito y ResourceNotFoundException. -->
-# Ejemplo completo: Dominio de Book
-## Modelo rico
+<!-- Example for Topic 06. Complete domain implementation of Book: rich model with calculated price and addAuthor with validation, service with interface and implementation using the mapper, and unit tests with Mockito verifying the success case and ResourceNotFoundException. -->
+# Complete Example: Book Domain
+## Rich model
 ```java
 public class Book {
     private Long id;
@@ -13,7 +13,7 @@ public class Book {
                 double discountPercentage, ..., List<Author> authors) {
         this.basePrice = basePrice;
         this.discountPercentage = discountPercentage;
-        this.price = calculateFinalPrice(); // campo calculado
+        this.price = calculateFinalPrice(); // calculated field
         this.authors = authors != null ? new ArrayList<>(authors) : new ArrayList<>();
     }
     public BigDecimal calculateFinalPrice() {
@@ -29,16 +29,16 @@ public class Book {
     }
 }
 ```
-## Servicio
+## Service
 ```java
-// Interfaz
+// Interface
 public interface BookService {
     List<BookDto> getAll(int page, int size);
-    BookDto getByIsbn(String isbn);           // lanza excepción si no existe
-    Optional<BookDto> findByIsbn(String isbn); // devuelve Optional, no lanza
+    BookDto getByIsbn(String isbn);           // throws exception if not found
+    Optional<BookDto> findByIsbn(String isbn); // returns Optional, does not throw
     BookDto create(BookDto bookDto);
 }
-// Implementación
+// Implementation
 public class BookServiceImpl implements BookService {
     private final BookRepository bookRepository;
     public BookServiceImpl(BookRepository bookRepository) {
@@ -51,7 +51,7 @@ public class BookServiceImpl implements BookService {
     }
 }
 ```
-## Test del servicio con Mockito
+## Service test with Mockito
 ```java
 @ExtendWith(MockitoExtension.class)
 class BookServiceImplTest {

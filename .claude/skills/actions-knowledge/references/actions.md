@@ -1,79 +1,79 @@
-# Referencia de acciones REST — EXAMEN-CESAR
+# REST Actions Reference — EXAMEN-CESAR
 
-## Verbos HTTP y semántica
+## HTTP verbs and semantics
 
-| Verbo | Uso | Código de éxito |
-|-------|-----|-----------------|
-| `GET` | Obtener uno o varios recursos | `200 OK` |
-| `POST` | Crear un nuevo recurso | `201 Created` |
-| `PUT` | Reemplazar un recurso completo | `200 OK` |
-| `PATCH` | Modificar parcialmente un recurso | `200 OK` |
-| `DELETE` | Eliminar un recurso | `204 No Content` |
+| Verb | Use | Success code |
+|------|-----|-------------|
+| `GET` | Retrieve one or more resources | `200 OK` |
+| `POST` | Create a new resource | `201 Created` |
+| `PUT` | Replace a complete resource | `200 OK` |
+| `PATCH` | Partially modify a resource | `200 OK` |
+| `DELETE` | Delete a resource | `204 No Content` |
 
-## Reglas de diseño REST
+## REST design rules
 
-- Los endpoints se nombran con **sustantivos**, nunca verbos.
-- Los recursos se expresan en **plural**.
-- La lógica de la operación la define el **verbo HTTP**, no la URL.
-- Todas las respuestas son **JSON**.
-- Los códigos de estado HTTP **MUST** ser semánticamente correctos.
-- **MUST** todos los endpoints comenzar por `/api`.
+- Endpoints are named with **nouns**, never verbs.
+- Resources are expressed in **plural**.
+- The logic of the operation is defined by the **HTTP verb**, not the URL.
+- All responses are **JSON**.
+- HTTP status codes **MUST** be semantically correct.
+- **MUST** all endpoints start with `/api`.
 
-## Endpoints canónicos
+## Canonical endpoints
 
 ```
-GET     /api/books            → Lista todos los libros          → 200 OK
-GET     /api/books/12         → Obtiene el libro con id 12      → 200 OK
-POST    /api/books            → Crea un nuevo libro             → 201 Created
-PUT     /api/books/12         → Reemplaza el libro con id 12    → 200 OK
-PATCH   /api/books/12         → Modifica parcialmente           → 200 OK
-DELETE  /api/books/12         → Elimina el libro con id 12      → 204 No Content
-GET     /api/books/12/authors → Lista los autores del libro 12  → 200 OK
+GET     /api/books            → List all books              → 200 OK
+GET     /api/books/12         → Get book with id 12         → 200 OK
+POST    /api/books            → Create a new book           → 201 Created
+PUT     /api/books/12         → Replace book with id 12     → 200 OK
+PATCH   /api/books/12         → Partially modify            → 200 OK
+DELETE  /api/books/12         → Delete book with id 12      → 204 No Content
+GET     /api/books/12/authors → List authors of book 12     → 200 OK
 ```
 
-## Recursos anidados
+## Nested resources
 
-Cuando un recurso pertenece a otro, se anida en la URL. Máximo 2 niveles de anidamiento.
+When a resource belongs to another, it is nested in the URL. Maximum 2 levels of nesting.
 
-## Paginación y filtros
+## Pagination and filters
 
-Usar query params, nunca en el path:
+Use query params, never in the path:
 
 ```
 GET /api/books?page=3&size=10
 GET /api/books?genre=fantasy&sort=title
 ```
 
-## Formato de respuesta de error
+## Error response format
 
 ```json
 {
-  "message": "El recurso con id 42 no existe",
+  "message": "Resource with id 42 does not exist",
   "status": 404,
   "timestamp": "2025-11-25T20:43:00Z"
 }
 ```
 
-## Códigos de estado comunes
+## Common status codes
 
-| Código | Cuándo usarlo |
-|--------|---------------|
-| `200 OK` | GET, PUT, PATCH con éxito |
-| `201 Created` | POST con éxito (recurso creado) |
-| `204 No Content` | DELETE con éxito |
-| `400 Bad Request` | Datos de entrada inválidos |
-| `404 Not Found` | Recurso no encontrado |
-| `409 Conflict` | Conflicto (email duplicado, etc.) |
-| `500 Internal Server Error` | Error inesperado del servidor |
+| Code | When to use |
+|------|-------------|
+| `200 OK` | GET, PUT, PATCH with success |
+| `201 Created` | POST with success (resource created) |
+| `204 No Content` | DELETE with success |
+| `400 Bad Request` | Invalid input data |
+| `404 Not Found` | Resource not found |
+| `409 Conflict` | Conflict (duplicate email, etc.) |
+| `500 Internal Server Error` | Unexpected server error |
 
-## Ejemplos ✅/❌
+## Examples ✅/❌
 
-- ✅ `GET /api/books` → `200 OK` con array JSON
-- ✅ `POST /api/books` → `201 Created` con el objeto creado
-- ✅ `DELETE /api/books/5` → `204 No Content` sin cuerpo
-- ❌ `GET /api/getBooks` — verbo en la URL
-- ❌ `POST /api/book` — recurso en singular
-- ❌ `POST /api/books` devolviendo `200` — debería ser `201`
-- ❌ `DELETE /api/books/5` devolviendo `200` — debería ser `204`
-- ❌ `/books` sin el prefijo `/api`
-- ❌ Respuesta en formato distinto a JSON
+- ✅ `GET /api/books` → `200 OK` with JSON array
+- ✅ `POST /api/books` → `201 Created` with the created object
+- ✅ `DELETE /api/books/5` → `204 No Content` without body
+- ❌ `GET /api/getBooks` — verb in the URL
+- ❌ `POST /api/book` — singular resource
+- ❌ `POST /api/books` returning `200` — should be `201`
+- ❌ `DELETE /api/books/5` returning `200` — should be `204`
+- ❌ `/books` without the `/api` prefix
+- ❌ Response in a format other than JSON

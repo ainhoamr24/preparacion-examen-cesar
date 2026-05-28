@@ -1,6 +1,6 @@
-<!-- Ejemplo del Tema 07. Implementación completa de la capa de persistencia: entidad JPA con relaciones @ManyToOne y @OneToMany, DAO JPA con EntityManager (count, findByIsbn, insert, update con flush), y repositorio que implementa la interfaz de dominio usando el DAO y el mapper. -->
-# Ejemplo completo: DAO y Repositorio JPA
-## Entidad JPA
+<!-- Example for Topic 07. Complete persistence layer implementation: JPA entity with @ManyToOne and @OneToMany relationships, JPA DAO with EntityManager (count, findByIsbn, insert, update with flush), and repository that implements the domain interface using the DAO and mapper. -->
+# Complete Example: JPA DAO and Repository
+## JPA Entity
 ```java
 @Entity
 @Table(name = "books")
@@ -18,12 +18,12 @@ public class BookJpaEntity implements Serializable {
     private PublisherJpaEntity publisher;
     @OneToMany(mappedBy = "book", cascade = CascadeType.ALL)
     private List<BookAuthorJpaEntity> bookAuthors = new ArrayList<>();
-    // Constructor vacío OBLIGATORIO para JPA
+    // Empty constructor REQUIRED for JPA
     public BookJpaEntity() {}
     // getters, setters
 }
 ```
-## DAO JPA
+## JPA DAO
 ```java
 public class BookJpaDaoImpl implements BookJpaDao {
     @PersistenceContext
@@ -55,12 +55,12 @@ public class BookJpaDaoImpl implements BookJpaDao {
     public BookJpaEntity update(BookJpaEntity entity) {
         BookJpaEntity managed = entityManager.find(BookJpaEntity.class, entity.getId());
         managed.getBookAuthors().clear();
-        entityManager.flush(); // borrar autores antes de volver a insertar
+        entityManager.flush(); // delete authors before re-inserting
         return entityManager.merge(entity);
     }
 }
 ```
-## Repositorio
+## Repository
 ```java
 public class BookRepositoryImpl implements BookRepository {
     private final BookJpaDao bookJpaDao;

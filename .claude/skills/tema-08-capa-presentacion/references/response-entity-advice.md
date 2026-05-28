@@ -1,21 +1,21 @@
-<!-- Referencia del Tema 08. Uso de ResponseEntity y respuestas HTTP básicas sin tipos inventados. -->
-# Referencia: ResponseEntity y respuestas HTTP
+<!-- Reference for Topic 08. ResponseEntity usage and basic HTTP responses without invented types. -->
+# Reference: ResponseEntity and HTTP responses
 ## ResponseEntity
-Permite controlar el código de estado y el cuerpo de la respuesta.
+Allows controlling the status code and response body.
 ```java
 return ResponseEntity.ok(body);
 return ResponseEntity.status(HttpStatus.CREATED).body(created);
 return ResponseEntity.noContent().build();
 return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
 ```
-## Validación en entrada
+## Input validation
 ```java
 @PostMapping
 public ResponseEntity<BookDto> create(@RequestBody @Valid BookDto request) {
     return ResponseEntity.status(HttpStatus.CREATED).body(bookService.create(request));
 }
 ```
-## Error simple
+## Simple error
 ```json
 {
   "message": "Book not found"

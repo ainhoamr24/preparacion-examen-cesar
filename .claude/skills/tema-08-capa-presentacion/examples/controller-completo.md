@@ -1,5 +1,5 @@
-<!-- Ejemplo del Tema 08 alineado con la estructura documentada del proyecto y sin tipos inventados. -->
-# Ejemplo completo: Controlador REST alineado con la referencia
+<!-- Example for Topic 08 aligned with the documented project structure and without invented types. -->
+# Complete Example: REST Controller aligned with the reference
 ```java
 @RestController
 @RequestMapping("/api/books")
@@ -37,7 +37,7 @@ public class BookController {
     }
 }
 ```
-## Excepción
+## Exception
 ```java
 public class ResourceNotFoundException extends RuntimeException {
     public ResourceNotFoundException(String message) {
@@ -45,7 +45,7 @@ public class ResourceNotFoundException extends RuntimeException {
     }
 }
 ```
-## Respuesta JSON de error
+## JSON error response
 ```json
 {
   "message": "Book not found"

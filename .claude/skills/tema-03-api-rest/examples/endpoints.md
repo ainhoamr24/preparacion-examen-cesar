@@ -1,31 +1,31 @@
-<!-- Ejemplos del Tema 03. Endpoints canónicos para el recurso books con todos los verbos HTTP, ejemplos de paginación y filtros con query params, y lista de casos correctos e incorrectos de diseño REST. -->
-# Ejemplos de Endpoints REST
-## Endpoints canónicos para el recurso `books`
+<!-- Examples for Topic 03. Canonical endpoints for the books resource with all HTTP verbs, pagination and filter examples with query params, and a list of correct and incorrect REST design cases. -->
+# REST Endpoint Examples
+## Canonical endpoints for the `books` resource
 ```
-GET    /api/books              → Lista todos los libros              → 200 OK
-GET    /api/books/12           → Obtiene el libro con id=12          → 200 OK
-POST   /api/books              → Crea un nuevo libro                 → 201 Created
-PUT    /api/books/12           → Reemplaza el libro con id=12        → 200 OK
-PATCH  /api/books/12           → Modifica parcialmente               → 200 OK
-DELETE /api/books/12           → Elimina el libro con id=12          → 204 No Content
-GET    /api/books/12/authors   → Lista los autores del libro id=12   → 200 OK
+GET    /api/books              → List all books              → 200 OK
+GET    /api/books/12           → Get book with id=12         → 200 OK
+POST   /api/books              → Create a new book           → 201 Created
+PUT    /api/books/12           → Replace book with id=12     → 200 OK
+PATCH  /api/books/12           → Partially modify            → 200 OK
+DELETE /api/books/12           → Delete book with id=12      → 204 No Content
+GET    /api/books/12/authors   → List authors of book id=12  → 200 OK
 ```
-## Paginación y filtros — siempre query params
+## Pagination and filters — always query params
 ```
 GET /api/books?page=3
 GET /api/books?page=2&size=10
 GET /api/books?genre=fantasy&sort=title
 ```
-## ✅ Correctos
-- `GET /api/books` → `200 OK` con array JSON
-- `POST /api/books` → `201 Created` con objeto creado en el cuerpo
-- `DELETE /api/books/5` → `204 No Content` sin cuerpo
-- `GET /api/books?page=3` → paginación mediante query params
-## ❌ Incorrectos
-- `GET /api/getBooks` — verbo en la URL
-- `POST /api/book` — recurso en singular
-- `POST /api/books` devolviendo `200` — debe ser `201`
-- `DELETE /api/books/5` devolviendo `200` — debe ser `204`
-- `/books` sin el prefijo `/api`
-- Respuesta en XML cuando la API es JSON
-- `/api/books/page/3` — el filtro va en query param, no en el path
+## ✅ Correct
+- `GET /api/books` → `200 OK` with JSON array
+- `POST /api/books` → `201 Created` with created object in body
+- `DELETE /api/books/5` → `204 No Content` without body
+- `GET /api/books?page=3` → pagination via query params
+## ❌ Incorrect
+- `GET /api/getBooks` — verb in the URL
+- `POST /api/book` — singular resource
+- `POST /api/books` returning `200` — must be `201`
+- `DELETE /api/books/5` returning `200` — must be `204`
+- `/books` without the `/api` prefix
+- Response in XML when the API is JSON
+- `/api/books/page/3` — filter goes in query param, not in the path

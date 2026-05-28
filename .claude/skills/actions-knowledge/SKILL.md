@@ -1,16 +1,16 @@
 ---
 name: actions-knowledge
-description: Conocimiento de dominio del proyecto EXAMEN-CESAR sobre Spring Boot, diseño REST y organización por paquetes inspirada en la referencia del proyecto. Cubre controladores, servicios de dominio, DTOs, mappers, persistencia y nomenclatura. Cárgalo siempre que implementes o revises cualquier clase Java del proyecto.
+description: Domain knowledge for the EXAMEN-CESAR project covering Spring Boot, REST design and package organisation inspired by the project reference. Covers controllers, domain services, DTOs, mappers, persistence and naming conventions. Load it whenever you implement or review any Java class in the project.
 ---
 # actions-knowledge
-Conocimiento de dominio de EXAMEN-CESAR. Toda implementación Java **MUST** seguir estas convenciones.
-## Ficheros de este skill
-| Fichero | Contenido |
-|---------|-----------|
-| `references/actions.md` | Referencia completa de controladores REST: verbos HTTP, códigos de estado, estructura de endpoints y ejemplos correctos e incorrectos |
+Domain knowledge for EXAMEN-CESAR. All Java implementations **MUST** follow these conventions.
+## Files in this skill
+| File | Content |
+|------|---------|
+| `references/actions.md` | Complete reference for REST controllers: HTTP verbs, status codes, endpoint structure and correct/incorrect examples |
 ---
-## Estructura del proyecto
-La organización válida para este proyecto es la documentada en el repositorio local:
+## Project structure
+The valid organisation for this project is the one documented in the local repository:
 ```text
 com.examencesar/
 ├── config/
@@ -31,88 +31,88 @@ com.examencesar/
     │       └── impl/
     └── repository/
 ```
-### Responsabilidades
-| Paquete | Responsabilidad | MUST NOT |
-|---------|-----------------|----------|
-| `controller` | Recibir HTTP, validar, delegar y responder | Lógica de negocio, acceso directo a persistencia |
-| `domain/model` | Representar el dominio | Mezclar detalles HTTP |
-| `domain/repository` | Definir contratos del dominio | Depender de controladores |
-| `domain/service` | Declarar casos de uso | Mezclar detalles HTTP |
-| `domain/service/impl` | Implementar lógica de negocio | Acceder al controlador |
-| `domain/service/dto` | Transportar datos entre capas | Contener lógica de persistencia |
-| `mapper` | Convertir entre DTOs, modelo y JPA | Hacer lógica de negocio |
-| `persistence/dao` | Acceso JPA de bajo nivel | Exponer HTTP |
-| `persistence/repository` | Adaptar persistencia a contratos del dominio | Meter reglas de negocio |
-| `config` y `exception` | Configuración y excepciones compartidas | Lógica de negocio compleja |
+### Responsibilities
+| Package | Responsibility | MUST NOT |
+|---------|---------------|----------|
+| `controller` | Receive HTTP, validate, delegate and respond | Business logic, direct persistence access |
+| `domain/model` | Represent the domain | Mix HTTP details |
+| `domain/repository` | Define domain contracts | Depend on controllers |
+| `domain/service` | Declare use cases | Mix HTTP details |
+| `domain/service/impl` | Implement business logic | Access the controller |
+| `domain/service/dto` | Transport data between layers | Contain persistence logic |
+| `mapper` | Convert between DTOs, model and JPA | Implement business logic |
+| `persistence/dao` | Low-level JPA access | Expose HTTP |
+| `persistence/repository` | Adapt persistence to domain contracts | Add business rules |
+| `config` and `exception` | Shared configuration and exceptions | Complex business logic |
 ---
-## Controladores REST
+## REST controllers
 ```java
 @RestController
-@RequestMapping("/api/<recursos>")
-public class <Recurso>Controller {
-    private final <Recurso>Service <recurso>Service;
+@RequestMapping("/api/<resources>")
+public class <Resource>Controller {
+    private final <Resource>Service <resource>Service;
 
-    public <Recurso>Controller(<Recurso>Service <recurso>Service) {
-        this.<recurso>Service = <recurso>Service;
+    public <Resource>Controller(<Resource>Service <resource>Service) {
+        this.<resource>Service = <resource>Service;
     }
 }
 ```
-**Reglas del controlador:**
-- **MUST** inyección por constructor.
-- **MUST** validar entradas cuando corresponda.
-- **MUST NOT** implementar lógica de negocio.
-- **MUST NOT** inyectar clases de `persistence` directamente.
-- **MUST NOT** capturar excepciones de negocio en el controlador.
+**Controller rules:**
+- **MUST** use constructor injection.
+- **MUST** validate inputs when applicable.
+- **MUST NOT** implement business logic.
+- **MUST NOT** inject `persistence` classes directly.
+- **MUST NOT** catch business exceptions in the controller.
 ---
-## Servicios de dominio
+## Domain services
 ```java
-public interface <Recurso>Service {
-    List<<Recurso>Dto> findAll();
-    Optional<<Recurso>Dto> findById(Long id);
-    <Recurso>Dto create(<Recurso>Dto dto);
-    <Recurso>Dto update(<Recurso>Dto dto);
+public interface <Resource>Service {
+    List<<Resource>Dto> findAll();
+    Optional<<Resource>Dto> findById(Long id);
+    <Resource>Dto create(<Resource>Dto dto);
+    <Resource>Dto update(<Resource>Dto dto);
     void deleteById(Long id);
 }
 
-public class <Recurso>ServiceImpl implements <Recurso>Service {
-    private final <Recurso>Repository repository;
+public class <Resource>ServiceImpl implements <Resource>Service {
+    private final <Resource>Repository repository;
 
-    public <Recurso>ServiceImpl(<Recurso>Repository repository) {
+    public <Resource>ServiceImpl(<Resource>Repository repository) {
         this.repository = repository;
     }
 }
 ```
-**Reglas:**
-- **MUST** usar contratos de `domain/repository`.
-- **MUST NOT** recibir objetos HTTP.
-- **MUST NOT** mezclar detalles JPA en la interfaz del servicio.
+**Rules:**
+- **MUST** use `domain/repository` contracts.
+- **MUST NOT** receive HTTP objects.
+- **MUST NOT** mix JPA details into the service interface.
 ---
-## Persistencia
+## Persistence
 ```java
-public interface <Recurso>Repository {
-    Optional<<Recurso>Dto> findById(Long id);
-    <Recurso>Dto save(<Recurso>Dto dto);
+public interface <Resource>Repository {
+    Optional<<Resource>Dto> findById(Long id);
+    <Resource>Dto save(<Resource>Dto dto);
 }
 
-public class <Recurso>RepositoryImpl implements <Recurso>Repository {
-    private final <Recurso>JpaDao <recurso>JpaDao;
+public class <Resource>RepositoryImpl implements <Resource>Repository {
+    private final <Resource>JpaDao <resource>JpaDao;
 }
 ```
-**Reglas:**
-- Los contratos van en `domain/repository`.
-- Las implementaciones van en `persistence/repository`.
-- Las entidades JPA van en `persistence/dao/jpa/entity`.
-- Los DAOs JPA van en `persistence/dao/jpa/impl`.
+**Rules:**
+- Contracts go in `domain/repository`.
+- Implementations go in `persistence/repository`.
+- JPA entities go in `persistence/dao/jpa/entity`.
+- JPA DAOs go in `persistence/dao/jpa/impl`.
 ---
-## DTOs y mappers
+## DTOs and mappers
 ```java
-public record <Recurso>Dto(Long id, String nombre) {}
+public record <Resource>Dto(Long id, String name) {}
 ```
-- Los DTOs van en `domain/service/dto`.
-- Los mappers van en `mapper`.
-- No inventar tipos intermedios que no existan en el proyecto.
+- DTOs go in `domain/service/dto`.
+- Mappers go in `mapper`.
+- Do not invent intermediate types that do not exist in the project.
 ---
-## Excepciones
+## Exceptions
 ```java
 public class ResourceNotFoundException extends RuntimeException {
     public ResourceNotFoundException(String message) {
@@ -121,19 +121,19 @@ public class ResourceNotFoundException extends RuntimeException {
 }
 ```
 ---
-## Nomenclatura
-| Elemento | Convención | Ejemplo |
-|----------|------------|---------|
-| Clases | `PascalCase` | `BookService`, `UserDto` |
-| Variables y métodos | `camelCase` | `bookTitle`, `findById` |
-| Constantes | `UPPER_SNAKE_CASE` | `MAX_RETRIES` |
-| Paquetes | `lowercase` | `com.examencesar.domain.service` |
+## Naming conventions
+| Element | Convention | Example |
+|---------|-----------|---------|
+| Classes | `PascalCase` | `BookService`, `UserDto` |
+| Variables and methods | `camelCase` | `bookTitle`, `findById` |
+| Constants | `UPPER_SNAKE_CASE` | `MAX_RETRIES` |
+| Packages | `lowercase` | `com.examencesar.domain.service` |
 | Endpoints (URL) | `kebab-case` | `/api/book-authors` |
 ---
-## Anti-patrones — MUST NOT
-- ❌ `@Autowired` en campo.
-- ❌ Lógica de negocio en el controlador.
-- ❌ Controlador inyectando `persistence` directamente.
-- ❌ Servicio recibiendo objetos HTTP.
-- ❌ Mezclar contrato de dominio y detalle JPA en la misma clase.
-- ❌ Tipos o paquetes no existentes en la estructura del proyecto.
+## Anti-patterns — MUST NOT
+- ❌ Field-level `@Autowired`.
+- ❌ Business logic in the controller.
+- ❌ Controller injecting `persistence` directly.
+- ❌ Service receiving HTTP objects.
+- ❌ Mixing domain contract and JPA detail in the same class.
+- ❌ Types or packages not present in the project structure.

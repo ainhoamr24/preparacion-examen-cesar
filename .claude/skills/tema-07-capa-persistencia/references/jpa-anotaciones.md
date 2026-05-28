@@ -1,59 +1,59 @@
-<!-- Referencia del Tema 07. Tablas de anotaciones JPA básicas (@Entity, @Id, @Column…) y de relaciones (@ManyToOne, @OneToMany, @ManyToMany con recomendación de romperla), operaciones del EntityManager (persist, merge, remove, flush), los tres métodos de consulta con ejemplos (JPQL, Native SQL, Criteria API) y uso de MapStruct. -->
-# Referencia: JPA — Anotaciones, EntityManager y Acceso a Datos
-## Anotaciones básicas de entidad JPA
-| Anotación | Uso |
+<!-- Reference for Topic 07. Tables of basic JPA annotations (@Entity, @Id, @Column…) and relationship annotations (@ManyToOne, @OneToMany, @ManyToMany with recommendation to break it), EntityManager operations (persist, merge, remove, flush), the three query methods with examples (JPQL, Native SQL, Criteria API) and MapStruct usage. -->
+# Reference: JPA — Annotations, EntityManager and Data Access
+## Basic JPA entity annotations
+| Annotation | Use |
 |-----------|-----|
-| `@Entity` | Marca la clase como entidad JPA |
-| `@Table(name = "publishers")` | Nombre de la tabla — obligatorio si difiere del nombre de la clase |
-| `@Id` | Clave primaria |
-| `@GeneratedValue(strategy = GenerationType.IDENTITY)` | BD genera el ID automáticamente |
-| `@GeneratedValue(strategy = GenerationType.AUTO)` | JPA elige la estrategia según el motor |
-| `@Column(name = "title_es")` | Nombre de columna cuando difiere del atributo Java |
-| `@Column(length = 2000)` | Longitud máxima de la columna |
-**Regla:** Una entidad JPA **MUST** tener un constructor vacío.
-## Anotaciones de relaciones
-| Anotación | Tipo | Uso |
+| `@Entity` | Marks the class as a JPA entity |
+| `@Table(name = "publishers")` | Table name — required when it differs from the class name |
+| `@Id` | Primary key |
+| `@GeneratedValue(strategy = GenerationType.IDENTITY)` | DB generates the ID automatically |
+| `@GeneratedValue(strategy = GenerationType.AUTO)` | JPA chooses the strategy based on the engine |
+| `@Column(name = "title_es")` | Column name when it differs from the Java attribute |
+| `@Column(length = 2000)` | Maximum column length |
+**Rule:** A JPA entity **MUST** have an empty constructor.
+## Relationship annotations
+| Annotation | Type | Use |
 |-----------|------|-----|
-| `@ManyToOne(fetch = FetchType.LAZY)` | Muchos a uno | Un libro tiene un publisher |
-| `@OneToMany(mappedBy = "book", cascade = CascadeType.ALL)` | Uno a muchos | Un libro tiene muchos autores |
-| `@ManyToMany` | Muchos a muchos | Directo — se desaconseja; mejor romperlo con entidad intermedia |
-| `@JoinColumn(name = "publisher_id")` | FK en la tabla | Indica la columna de la clave foránea |
-| `@JoinTable(name = "books_authors", joinColumns = ..., inverseJoinColumns = ...)` | Tabla intermedia | Para @ManyToMany directo |
-**Recomendación:** Romper `@ManyToMany` en dos `@ManyToOne` con una entidad intermedia (`BookAuthorJpaEntity`). Ventajas: mayor flexibilidad, mejor control de persistencia.
-## EntityManager — operaciones
-| Operación | Método | Descripción |
+| `@ManyToOne(fetch = FetchType.LAZY)` | Many-to-one | A book has one publisher |
+| `@OneToMany(mappedBy = "book", cascade = CascadeType.ALL)` | One-to-many | A book has many authors |
+| `@ManyToMany` | Many-to-many | Direct — discouraged; better to break it with an intermediate entity |
+| `@JoinColumn(name = "publisher_id")` | FK in the table | Indicates the foreign key column |
+| `@JoinTable(name = "books_authors", joinColumns = ..., inverseJoinColumns = ...)` | Intermediate table | For direct @ManyToMany |
+**Recommendation:** Break `@ManyToMany` into two `@ManyToOne` with an intermediate entity (`BookAuthorJpaEntity`). Benefits: greater flexibility, better persistence control.
+## EntityManager — operations
+| Operation | Method | Description |
 |-----------|--------|-------------|
-| Crear | `entityManager.persist(entity)` | Inserta en BD (al sincronizar) |
-| Leer | `entityManager.find(BookJpaEntity.class, id)` | Recupera por clave primaria |
-| Actualizar | `entityManager.merge(entity)` | Sincroniza cambios |
-| Borrar | `entityManager.remove(entity)` | Elimina la entidad |
-| JPQL | `entityManager.createQuery("SELECT b FROM BookJpaEntity b WHERE ...", ...)` | Consulta JPQL |
-| Sincronizar | `entityManager.flush()` | Fuerza escritura inmediata |
-Inyección:
+| Create | `entityManager.persist(entity)` | Inserts into DB (on flush) |
+| Read | `entityManager.find(BookJpaEntity.class, id)` | Retrieves by primary key |
+| Update | `entityManager.merge(entity)` | Synchronises changes |
+| Delete | `entityManager.remove(entity)` | Deletes the entity |
+| JPQL | `entityManager.createQuery("SELECT b FROM BookJpaEntity b WHERE ...", ...)` | JPQL query |
+| Flush | `entityManager.flush()` | Forces immediate write |
+Injection:
 ```java
 @PersistenceContext
 private EntityManager entityManager;
 ```
-## Tipos de acceso a datos
-### 1. JPQL — orientado a entidades (recomendado)
+## Data access types
+### 1. JPQL — entity-oriented (recommended)
 ```java
 List<BookJpaEntity> books = entityManager
     .createQuery("SELECT b FROM BookJpaEntity b WHERE b.author = :author", BookJpaEntity.class)
     .setParameter("author", "Isaac Asimov")
     .getResultList();
 ```
-**Ventajas:** legible, independiente del motor, aprovecha relaciones.
-**Inconvenientes:** no soporta funciones específicas de cada motor SQL.
-### 2. Native SQL — SQL crudo
+**Advantages:** readable, engine-independent, leverages relationships.
+**Disadvantages:** does not support engine-specific functions.
+### 2. Native SQL — raw SQL
 ```java
 List<Object[]> result = entityManager
     .createNativeQuery("SELECT id, title FROM books WHERE author = ?1")
     .setParameter(1, "Isaac Asimov")
     .getResultList();
 ```
-**Ventajas:** control total, funciones específicas del motor.
-**Inconvenientes:** dependiente del dialecto, propenso a errores de mantenimiento.
-### 3. Criteria API — programático y tipado
+**Advantages:** full control, engine-specific functions.
+**Disadvantages:** dialect-dependent, prone to maintenance errors.
+### 3. Criteria API — programmatic and typed
 ```java
 CriteriaBuilder cb = entityManager.getCriteriaBuilder();
 CriteriaQuery<BookJpaEntity> cq = cb.createQuery(BookJpaEntity.class);
@@ -61,9 +61,9 @@ Root<BookJpaEntity> book = cq.from(BookJpaEntity.class);
 cq.select(book).where(cb.equal(book.get("author"), "Isaac Asimov"));
 List<BookJpaEntity> results = entityManager.createQuery(cq).getResultList();
 ```
-**Ventajas:** tipado, seguro en compilación, ideal para filtros dinámicos.
-**Inconvenientes:** verboso, complejo para consultas simples.
-## MapStruct — mapeo automático
+**Advantages:** typed, compile-safe, ideal for dynamic filters.
+**Disadvantages:** verbose, complex for simple queries.
+## MapStruct — automatic mapping
 ```java
 @Mapper
 public interface PublisherMapper {
@@ -72,4 +72,4 @@ public interface PublisherMapper {
     PublisherEntity toDomainEntity(PublisherJpaEntity jpaEntity);
 }
 ```
-Si los campos tienen el mismo nombre y tipo, MapStruct genera la implementación automáticamente en tiempo de compilación.
+If fields have the same name and type, MapStruct generates the implementation automatically at compile time.

@@ -1,27 +1,27 @@
-<!-- Skill principal del Tema 06. Define el conocimiento sobre dominio, DTOs, mapeadores y excepciones sin introducir tipos no respaldados por el proyecto. -->
+<!-- Main skill for Topic 06. Defines knowledge about domain, DTOs, mappers and exceptions without introducing types not backed by the project. -->
 ---
 name: tema-06-capa-dominio
-description: Conocimiento del Tema 06 sobre la capa de dominio. Cubre independencia de frameworks, inversión de dependencias, modelos, DTOs en `domain/service/dto`, mapeadores singleton, servicios, repositorios de dominio, excepciones y testing con JUnit 5 y Mockito. Cárgalo para cualquier pregunta o implementación sobre la capa de dominio.
+description: Knowledge for Topic 06 on the domain layer. Covers framework independence, dependency inversion, models, DTOs in `domain/service/dto`, singleton mappers, services, domain repositories, exceptions and testing with JUnit 5 and Mockito. Load it for any question or implementation about the domain layer.
 ---
-# Tema 06 — Capa de Dominio
-## Ficheros de este skill
-| Fichero | Contenido |
-|---------|-----------|
-| `references/modelos-dtos-mappers.md` | Referencia de modelos, DTOs con record, mapeadores singleton, excepciones y validaciones |
-| `examples/book-domain.md` | Ejemplo completo del dominio con Book, BookDto, BookMapper, BookService, BookRepository y tests |
+# Topic 06 — Domain Layer
+## Files in this skill
+| File | Content |
+|------|---------|
+| `references/modelos-dtos-mappers.md` | Reference for models, DTOs with record, singleton mappers, exceptions and validations |
+| `examples/book-domain.md` | Complete domain example with Book, BookDto, BookMapper, BookService, BookRepository and tests |
 ---
-## Principios del dominio
-La capa de dominio es el corazón de la aplicación:
-- Contiene reglas de negocio y lógica fundamental.
-- **MUST** estar aislada de frameworks externos siempre que el diseño del módulo lo permita.
-- Define contratos que luego implementa la persistencia.
+## Domain principles
+The domain layer is the heart of the application:
+- Contains business rules and fundamental logic.
+- **MUST** be isolated from external frameworks wherever the module design allows.
+- Defines contracts that persistence then implements.
 ---
-## Modelos y DTOs
-- `domain/model/` contiene el modelo del dominio.
-- `domain/service/dto/` contiene DTOs usados entre capas.
-- No introducir tipos inventados solo para “persistencia” si el proyecto no los usa realmente.
+## Models and DTOs
+- `domain/model/` contains the domain model.
+- `domain/service/dto/` contains DTOs used between layers.
+- Do not introduce invented types just for "persistence" if the project does not actually use them.
 ---
-## Excepciones del dominio
+## Domain exceptions
 ```java
 public class BusinessException extends RuntimeException {
     public BusinessException(String message) { super(message); }
@@ -34,7 +34,7 @@ public class ValidationException extends RuntimeException {
 }
 ```
 ---
-## Testing del dominio
+## Domain testing
 - JUnit 5 + Mockito.
-- Tests de servicios con `@Mock` y `@InjectMocks`.
-- Tests de mapeadores si la conversión tiene lógica relevante.
+- Service tests with `@Mock` and `@InjectMocks`.
+- Mapper tests when the conversion has relevant logic.

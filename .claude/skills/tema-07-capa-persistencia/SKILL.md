@@ -1,24 +1,24 @@
-<!-- Skill principal del Tema 07. Define el conocimiento sobre la capa de persistencia: patrón DAO con interfaz genérica y DAOs específicos, anotaciones JPA, EntityManager, los tres tipos de acceso a datos (JPQL, Native SQL, Criteria API), mapeadores con MapStruct y testing con H2 y Flyway. -->
+<!-- Main skill for Topic 07. Defines knowledge about the persistence layer: DAO pattern with generic interface and specific DAOs, JPA annotations, EntityManager, the three data access types (JPQL, Native SQL, Criteria API), MapStruct mappers and testing with H2 and Flyway. -->
 ---
 name: tema-07-capa-persistencia
-description: Conocimiento del Tema 07 sobre la capa de persistencia. Cubre DAOs, entidades JPA, `EntityManager`, repositorios adaptadores y testing de persistencia con H2 y Flyway. Cárgalo para cualquier pregunta o implementación sobre JPA, repositorios o la capa de persistencia.
+description: Knowledge for Topic 07 on the persistence layer. Covers DAOs, JPA entities, `EntityManager`, adapter repositories and persistence testing with H2 and Flyway. Load it for any question or implementation about JPA, repositories or the persistence layer.
 ---
-# Tema 07 — Capa de Persistencia
-## Ficheros de este skill
-| Fichero | Contenido |
-|---------|-----------|
-| `references/jpa-anotaciones.md` | Referencia completa de anotaciones JPA, EntityManager y tipos de acceso a datos |
-| `examples/dao-repositorio.md` | Ejemplo completo de DAO genérico, DAO específico, repositorio y test con H2 |
+# Topic 07 — Persistence Layer
+## Files in this skill
+| File | Content |
+|------|---------|
+| `references/jpa-anotaciones.md` | Complete reference for JPA annotations, EntityManager and data access types |
+| `examples/dao-repositorio.md` | Complete example of generic DAO, specific DAO, repository and H2 test |
 ---
-## Responsabilidad
-La capa de persistencia gestiona el acceso a datos:
-- Trabaja con modelos de dominio, abstrayendo los detalles de almacenamiento.
-- Implementa las interfaces de repositorio definidas en dominio.
-- Usa DAOs para encapsular los detalles de JPA.
+## Responsibility
+The persistence layer manages data access:
+- Works with domain models, abstracting storage details.
+- Implements the repository interfaces defined in the domain.
+- Uses DAOs to encapsulate JPA details.
 ---
-## Patrón DAO
-El patrón DAO (Data Access Object) separa y encapsula el acceso a datos.
-### Interfaz genérica
+## DAO pattern
+The DAO (Data Access Object) pattern separates and encapsulates data access.
+### Generic interface
 ```java
 public interface GenericDao<T> {
     List<T> findAll(int page, int size);
@@ -29,7 +29,7 @@ public interface GenericDao<T> {
     long count();
 }
 ```
-### DAOs específicos
+### Specific DAOs
 ```java
 public interface BookJpaDao extends GenericDao<BookJpaEntity> {
     Optional<BookJpaEntity> findByIsbn(String isbn);
@@ -37,7 +37,7 @@ public interface BookJpaDao extends GenericDao<BookJpaEntity> {
 }
 ```
 ---
-## Testing de persistencia
+## Persistence testing
 ```java
 @DataJpaTest
 @ContextConfiguration(classes = TestConfig.class)
@@ -47,11 +47,11 @@ class BookJpaDaoImplTest {
     @Autowired private BookJpaDao bookJpaDao;
 }
 ```
-Configuración BD en memoria de tests:
+Test in-memory DB configuration:
 ```properties
 spring.datasource.url=jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;
 spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.H2Dialect
 spring.jpa.hibernate.ddl-auto=none
 spring.jpa.show-sql=true
 ```
-Flyway puede ejecutar scripts de `src/test/resources/db/migration/` cuando el proyecto lo configure así.
+Flyway can run scripts from `src/test/resources/db/migration/` when the project is configured to do so.

@@ -1,53 +1,53 @@
-<!-- Skill principal del Tema 03. Define el conocimiento sobre APIs REST: verbos HTTP, códigos de estado, diseño de endpoints y anti-patrones. Es el punto de entrada para cargar este tema. -->
+<!-- Main skill for Topic 03. Defines knowledge about REST APIs: HTTP verbs, status codes, endpoint design and anti-patterns. Entry point for loading this topic. -->
 ---
 name: tema-03-api-rest
-description: Conocimiento del Tema 03 sobre APIs REST. Cubre el protocolo HTTP, los servicios REST (verbos GET/POST/PUT/DELETE/PATCH y su semántica), el formato JSON, los códigos de estado HTTP agrupados por familia (1xx-5xx) y las buenas prácticas de diseño de endpoints. Cárgalo para cualquier pregunta o implementación relacionada con REST, HTTP o diseño de APIs.
+description: Knowledge for Topic 03 on REST APIs. Covers the HTTP protocol, REST services (GET/POST/PUT/DELETE/PATCH verbs and their semantics), JSON format, HTTP status code families (1xx-5xx) and endpoint design best practices. Load it for any question or implementation related to REST, HTTP or API design.
 ---
-# Tema 03 — API REST
-## Ficheros de este skill
-| Fichero | Contenido |
-|---------|-----------|
-| `references/http-verbos-codigos.md` | Referencia completa de verbos HTTP, códigos de estado y formato JSON |
-| `examples/endpoints.md` | Ejemplos canónicos de endpoints REST correctos e incorrectos |
+# Topic 03 — REST API
+## Files in this skill
+| File | Content |
+|------|---------|
+| `references/http-verbos-codigos.md` | Complete reference for HTTP verbs, status codes and JSON format |
+| `examples/endpoints.md` | Canonical examples of correct and incorrect REST endpoints |
 ---
-## HTTP y arquitectura cliente-servidor
-Toda aplicación web se basa en una arquitectura **cliente-servidor**:
-- El **cliente** envía una petición HTTP con: URL del recurso, cabeceras y parámetros.
-- El **servidor** responde con: código de estado, cabeceras de respuesta y el recurso.
-Una **URL** tiene tres partes:
-1. Protocolo (`http` o `https`)
-2. Nombre de dominio (identifica al servidor)
-3. Ruta/URI (identifica el recurso dentro del servidor)
-Ejemplo: `http://miservidor.com/books?id=123`
-- `http` → protocolo
-- `miservidor.com` → dominio
-- `books?id=123` → URI; el texto tras `?` son parámetros adicionales
+## HTTP and client-server architecture
+Every web application is based on a **client-server** architecture:
+- The **client** sends an HTTP request with: resource URL, headers and parameters.
+- The **server** responds with: status code, response headers and the resource.
+A **URL** has three parts:
+1. Protocol (`http` or `https`)
+2. Domain name (identifies the server)
+3. Path/URI (identifies the resource within the server)
+Example: `http://myserver.com/books?id=123`
+- `http` → protocol
+- `myserver.com` → domain
+- `books?id=123` → URI; text after `?` are additional parameters
 ---
-## Servicios REST
-**REST** (REpresentational State Transfer) — estilo de arquitectura para sistemas distribuidos.
-- Cada recurso se identifica con una **URI**.
-- Las operaciones las define el **verbo HTTP**, no la URL.
-- Las respuestas son típicamente **JSON**.
-### Verbos HTTP y semántica
-| Verbo | Uso | Código de éxito |
-|-------|-----|-----------------|
-| `GET` | Obtener uno o varios recursos | `200 OK` |
-| `POST` | Crear un nuevo recurso | `201 Created` |
-| `PUT` | Reemplazar un recurso completo | `200 OK` |
-| `PATCH` | Modificar parcialmente un recurso | `200 OK` |
-| `DELETE` | Eliminar un recurso | `204 No Content` |
+## REST services
+**REST** (REpresentational State Transfer) — architectural style for distributed systems.
+- Each resource is identified by a **URI**.
+- Operations are defined by the **HTTP verb**, not the URL.
+- Responses are typically **JSON**.
+### HTTP verbs and semantics
+| Verb | Use | Success code |
+|------|-----|-------------|
+| `GET` | Retrieve one or more resources | `200 OK` |
+| `POST` | Create a new resource | `201 Created` |
+| `PUT` | Replace a complete resource | `200 OK` |
+| `PATCH` | Partially modify a resource | `200 OK` |
+| `DELETE` | Delete a resource | `204 No Content` |
 ---
-## Endpoints — buenas prácticas
-- Usar **sustantivos**, nunca verbos (`/books`, no `/getBooks`).
-- Los recursos en **plural** aunque se devuelva uno solo.
-- Para relacionar recursos, **anidar** en la URL.
-- Todos los endpoints empiezan por `/api`.
-- Parámetros opcionales como query params, no en el path.
+## Endpoints — best practices
+- Use **nouns**, never verbs (`/books`, not `/getBooks`).
+- Resources in **plural** even when returning a single one.
+- To relate resources, **nest** in the URL.
+- All endpoints start with `/api`.
+- Optional parameters as query params, not in the path.
 ---
-## Anti-patrones — MUST NOT
-- ❌ Verbos en la URL: `/getBooks`, `/createUser`
-- ❌ Recursos en singular: `/book`
-- ❌ `POST` devolviendo `200` en vez de `201`
-- ❌ `DELETE` devolviendo `200` en vez de `204`
-- ❌ Endpoints sin el prefijo `/api`
-- ❌ Respuestas en formato distinto a JSON
+## Anti-patterns — MUST NOT
+- ❌ Verbs in the URL: `/getBooks`, `/createUser`
+- ❌ Singular resources: `/book`
+- ❌ `POST` returning `200` instead of `201`
+- ❌ `DELETE` returning `200` instead of `204`
+- ❌ Endpoints without the `/api` prefix
+- ❌ Responses in a format other than JSON

@@ -1,37 +1,37 @@
-<!-- Skill principal del Tema 05. Define el conocimiento sobre arquitectura por capas: las tres capas (presentación, dominio, persistencia), sus responsabilidades, la inversión de dependencias moviendo interfaces de repositorio al dominio, y las reglas absolutas de comunicación entre capas. -->
+<!-- Main skill for Topic 05. Defines knowledge about layered architecture: the three layers (presentation, domain, persistence), their responsibilities, dependency inversion by moving repository interfaces to the domain, and absolute rules for inter-layer communication. -->
 ---
 name: tema-05-arquitectura-por-capas
-description: Conocimiento del Tema 05 sobre Arquitectura por Capas. Cubre el patrón de capas (presentación/controller, dominio, persistencia), las responsabilidades de cada capa, las anotaciones Spring Boot de presentación (@RestController, @RequestMapping, @GetMapping, etc.), la estructura de dominio sin dependencias externas, la inversión de dependencias (interfaces de repositorio en dominio), y las reglas de comunicación entre capas. Cárgalo para cualquier pregunta o implementación sobre la estructura de capas.
+description: Knowledge for Topic 05 on Layered Architecture. Covers the layered pattern (presentation/controller, domain, persistence), the responsibilities of each layer, Spring Boot presentation annotations (@RestController, @RequestMapping, @GetMapping, etc.), the domain structure without external dependencies, dependency inversion (repository interfaces in the domain), and inter-layer communication rules. Load it for any question or implementation about the layered structure.
 ---
-# Tema 05 — Arquitectura por Capas
-## Ficheros de este skill
-| Fichero | Contenido |
-|---------|-----------|
-| `references/capas-responsabilidades.md` | Tabla detallada de responsabilidades, lo que SÍ y NO va en cada capa |
-| `examples/controller-service-repo.md` | Ejemplos de código de cada capa con sus anotaciones Spring |
+# Topic 05 — Layered Architecture
+## Files in this skill
+| File | Content |
+|------|---------|
+| `references/capas-responsabilidades.md` | Detailed table of responsibilities, what DOES and DOES NOT go in each layer |
+| `examples/controller-service-repo.md` | Code examples for each layer with their Spring annotations |
 ---
-## Las tres capas básicas
+## The three basic layers
 ```
 ┌──────────────────────────┐
-│   controller (presentation) │  Gestiona HTTP: recibe, delega, responde
+│   controller (presentation) │  Manages HTTP: receives, delegates, responds
 ├──────────────────────────┤
-│         domain           │  Lógica de negocio, modelos, servicios
+│         domain           │  Business logic, models, services
 ├──────────────────────────┤
-│       persistence        │  Acceso a datos (CRUD)
+│       persistence        │  Data access (CRUD)
 └──────────────────────────┘
 ```
-Las capas superiores usan las inferiores. Las inferiores **NO** dependen de las superiores.
+Upper layers use lower ones. Lower layers **DO NOT** depend on upper ones.
 ---
-## Inversión de dependencias
-Sin inversión: `controller → domain → persistence` (todo depende de persistencia).
-Con inversión: las **interfaces de repositorio se mueven a dominio**.
+## Dependency inversion
+Without inversion: `controller → domain → persistence` (everything depends on persistence).
+With inversion: **repository interfaces are moved to the domain**.
 ```
 controller → domain ← persistence
 ```
-Resultado: persistencia depende de dominio, no al revés. Se puede cambiar la BD sin tocar dominio.
+Result: persistence depends on domain, not the other way around. The DB can be changed without touching the domain.
 ---
-## Reglas absolutas — MUST NOT
-- **MUST NOT** poner lógica de negocio en la capa de presentación.
-- **MUST NOT** que dominio importe clases de Spring, JPA u otras dependencias externas.
-- **MUST NOT** que persistencia tenga lógica de negocio.
-- **MUST NOT** saltar capas (controlador accediendo directamente a persistencia).
+## Absolute rules — MUST NOT
+- **MUST NOT** put business logic in the presentation layer.
+- **MUST NOT** have the domain import Spring, JPA or other external dependencies.
+- **MUST NOT** have persistence contain business logic.
+- **MUST NOT** skip layers (controller accessing persistence directly).

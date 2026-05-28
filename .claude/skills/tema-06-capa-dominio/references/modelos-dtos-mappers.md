@@ -1,7 +1,7 @@
-<!-- Referencia del Tema 06. DTOs con record Java, mapeadores singleton y validaciones coherentes con la estructura real del proyecto. -->
-# Referencia: Modelos, DTOs, Mapeadores y Excepciones
-## DTOs con record Java (Java 17+)
-Los `record` son útiles para DTOs. En la referencia aparece un `BookDto` en `domain/service/dto/`.
+<!-- Reference for Topic 06. DTOs with Java record, singleton mappers and validations consistent with the actual project structure. -->
+# Reference: Models, DTOs, Mappers and Exceptions
+## DTOs with Java record (Java 17+)
+`record` types are useful for DTOs. The reference shows a `BookDto` in `domain/service/dto/`.
 ```java
 public record BookDto(
     Long id,
@@ -12,8 +12,8 @@ public record BookDto(
     List<AuthorDto> authors
 ) {}
 ```
-## Mapeadores — patrón Singleton
-La referencia usa mapeadores singleton mediante `getInstance()`.
+## Mappers — Singleton pattern
+The reference uses singleton mappers via `getInstance()`.
 ```java
 public class BookMapper {
     private static BookMapper INSTANCE;
@@ -30,25 +30,25 @@ public class BookMapper {
     public BookJpaEntity fromBookDtoToBookJpaEntity(BookDto dto) { ... }
 }
 ```
-Uso en servicio o repositorio:
+Usage in service or repository:
 ```java
 return bookRepository.findByIsbn(isbn)
     .map(BookMapper.getInstance()::fromBookJpaEntityToBookDto)
     .orElseThrow(() -> new ResourceNotFoundException("Book not found: " + isbn));
 ```
-## Validaciones
-### En DTOs
+## Validations
+### In DTOs
 ```java
 public record BookDto(
-    @NotNull(message = "ISBN es obligatorio")
-    @Pattern(regexp = "\\d{13}", message = "ISBN debe tener 13 dígitos")
+    @NotNull(message = "ISBN is required")
+    @Pattern(regexp = "\\d{13}", message = "ISBN must have 13 digits")
     String isbn,
-    @NotNull(message = "El precio base no puede ser nulo")
-    @DecimalMin(value = "0.0", inclusive = true, message = "El precio base debe ser mayor o igual a 0")
+    @NotNull(message = "Base price cannot be null")
+    @DecimalMin(value = "0.0", inclusive = true, message = "Base price must be greater than or equal to 0")
     BigDecimal price
 ) {}
 ```
-### En la entidad
+### In the entity
 ```java
 public void addAuthor(Author author) {
     if (this.authors.contains(author))
@@ -56,7 +56,7 @@ public void addAuthor(Author author) {
     this.authors.add(author);
 }
 ```
-### En el servicio
+### In the service
 ```java
 public BookDto create(BookDto bookDto) {
     if (findByIsbn(bookDto.isbn()).isPresent())
@@ -64,9 +64,9 @@ public BookDto create(BookDto bookDto) {
     return bookRepository.save(bookDto);
 }
 ```
-## Diferencias entre validaciones
-| Tipo | Dónde | Qué valida | Excepción |
-|------|-------|------------|-----------|
-| Datos de entrada | DTO | Formato/tipo del dato | `ValidationException` |
-| Lógica de negocio interna | Entidad | Invariantes del objeto | `BusinessException` |
-| Lógica entre objetos | Servicio | Reglas que cruzan entidades o usan BD | `BusinessException` / `ResourceNotFoundException` |
+## Validation differences
+| Type | Where | What it validates | Exception |
+|------|-------|------------------|-----------|
+| Input data | DTO | Data format/type | `ValidationException` |
+| Internal business logic | Entity | Object invariants | `BusinessException` |
+| Cross-object logic | Service | Rules spanning entities or using DB | `BusinessException` / `ResourceNotFoundException` |

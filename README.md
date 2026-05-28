@@ -1,18 +1,18 @@
 # EXAMEN-CESAR
 
-Base de proyecto Spring Boot para preparar el examen de arquitectura backend, REST y persistencia.
+Spring Boot base project for practising backend architecture, REST and persistence for the exam.
 
-## Referencia usada
+## Reference used
 
-La documentación de este repositorio toma como ejemplo estructural:
+The documentation in this repository takes the following as its structural example:
 
 - [isma-MR/RepasoExamenCesar](https://github.com/isma-MR/RepasoExamenCesar)
 
-No se copia ese repositorio literalmente; se usa para evitar describir una estructura inventada.
+That repository is not copied literally; it is used to avoid describing an invented structure.
 
-## Estructura de referencia
+## Reference structure
 
-La referencia organiza el código principal alrededor de estos paquetes:
+The reference organises the main code around these packages:
 
 ```text
 src/main/java/com/.../
@@ -35,24 +35,24 @@ src/main/java/com/.../
     └── repository/
 ```
 
-## Idea arquitectónica
+## Architectural idea
 
-- `controller`: expone endpoints REST y delega.
-- `domain/model`: representa el dominio.
-- `domain/repository`: define contratos del dominio.
-- `domain/service`: declara casos de uso.
-- `domain/service/impl`: implementa la lógica de negocio.
-- `domain/service/dto`: mueve datos entre capas.
-- `mapper`: transforma entre entidades de persistencia y DTOs/modelos.
-- `persistence/dao`: acceso JPA de bajo nivel.
-- `persistence/repository`: adapta persistencia a los contratos de `domain/repository`.
-- `config` y `exception`: configuración y excepciones compartidas.
+- `controller`: exposes REST endpoints and delegates.
+- `domain/model`: represents the domain.
+- `domain/repository`: defines domain contracts.
+- `domain/service`: declares use cases.
+- `domain/service/impl`: implements business logic.
+- `domain/service/dto`: moves data between layers.
+- `mapper`: transforms between persistence entities and DTOs/models.
+- `persistence/dao`: low-level JPA access.
+- `persistence/repository`: adapts persistence to the contracts in `domain/repository`.
+- `config` and `exception`: shared configuration and exceptions.
 
-## Estado actual
+## Current status
 
-Este repositorio todavía está en fase base. La documentación se ha corregido para que futuras implementaciones sigan una estructura coherente con la referencia.
+This repository is still in its base phase. The documentation has been corrected so that future implementations follow a structure consistent with the reference.
 
-## Comandos
+## Commands
 
 ```bash
 ./mvnw test

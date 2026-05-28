@@ -1,39 +1,39 @@
-<!-- Referencia del Tema 05. Tabla de responsabilidades de cada capa indicando qué SÍ y qué NO contiene, y tablas de anotaciones Spring Boot agrupadas por capa (presentación: @RestController, @GetMapping…; dominio: @Service, @Transactional; persistencia: @Entity, @Repository…). -->
-# Referencia: Capas — Responsabilidades y Reglas
-## Tabla de responsabilidades
-| Capa | Responsabilidad | SÍ contiene | NO contiene |
-|------|----------------|-------------|-------------|
-| **Presentación (controller)** | Recibir peticiones HTTP, validar entrada básica, delegar al servicio, devolver respuesta | Controladores, anotaciones `@RestController`, `@RequestMapping`, `@GetMapping`… | Lógica de negocio, acceso a repositorios |
-| **Dominio** | Lógica de negocio, modelos, reglas del sistema | Modelos (entidades), servicios (interfaz + impl), interfaces de repositorio | Imports de Spring, JPA, o cualquier framework externo |
-| **Persistencia** | Interacción con el origen de datos | Implementaciones de repositorio, DAOs, entidades JPA | Lógica de negocio |
-## Anotaciones Spring Boot por capa
-### Capa de presentación
-| Anotación | Uso |
+<!-- Reference for Topic 05. Responsibility table for each layer indicating what IS and IS NOT included, and Spring Boot annotation tables grouped by layer (presentation: @RestController, @GetMapping…; domain: @Service, @Transactional; persistence: @Entity, @Repository…). -->
+# Reference: Layers — Responsibilities and Rules
+## Responsibility table
+| Layer | Responsibility | DOES contain | DOES NOT contain |
+|-------|---------------|-------------|-----------------|
+| **Presentation (controller)** | Receive HTTP requests, validate basic input, delegate to service, return response | Controllers, `@RestController`, `@RequestMapping`, `@GetMapping`… annotations | Business logic, repository access |
+| **Domain** | Business logic, models, system rules | Models (entities), services (interface + impl), repository interfaces | Spring, JPA or any external framework imports |
+| **Persistence** | Interaction with the data source | Repository implementations, DAOs, JPA entities | Business logic |
+## Spring Boot annotations by layer
+### Presentation layer
+| Annotation | Use |
 |-----------|-----|
-| `@RestController` | Clase controladora REST; respuestas auto-serializadas a JSON |
-| `@RequestMapping("/api/books")` | Mapea todas las rutas del controlador al prefijo indicado |
-| `@GetMapping` / `@GetMapping("/{id}")` | Maneja GET; puede incluir path variable |
-| `@PostMapping` | Maneja POST |
-| `@PutMapping("/{id}")` | Maneja PUT |
-| `@PatchMapping("/{id}")` | Maneja PATCH |
-| `@DeleteMapping("/{id}")` | Maneja DELETE |
-| `@PathVariable` | Extrae variable del path (`/books/{id}` → `Long id`) |
-| `@RequestParam` | Extrae parámetro de query (`?page=3` → `int page`) |
-| `@RequestBody` | Deserializa el cuerpo JSON de la petición |
-| `@Valid` | Activa Bean Validation sobre el parámetro anotado |
-### Capa de aplicación/dominio
-| Anotación | Uso |
+| `@RestController` | REST controller class; responses auto-serialised to JSON |
+| `@RequestMapping("/api/books")` | Maps all controller routes to the given prefix |
+| `@GetMapping` / `@GetMapping("/{id}")` | Handles GET; can include a path variable |
+| `@PostMapping` | Handles POST |
+| `@PutMapping("/{id}")` | Handles PUT |
+| `@PatchMapping("/{id}")` | Handles PATCH |
+| `@DeleteMapping("/{id}")` | Handles DELETE |
+| `@PathVariable` | Extracts variable from path (`/books/{id}` → `Long id`) |
+| `@RequestParam` | Extracts query parameter (`?page=3` → `int page`) |
+| `@RequestBody` | Deserialises the JSON body of the request |
+| `@Valid` | Activates Bean Validation on the annotated parameter |
+### Application/domain layer
+| Annotation | Use |
 |-----------|-----|
-| `@Service` | Marca la clase como servicio Spring (en la implementación) |
-| `@Transactional` | Gestión automática de transacciones |
-### Capa de persistencia
-| Anotación | Uso |
+| `@Service` | Marks the class as a Spring service (on the implementation) |
+| `@Transactional` | Automatic transaction management |
+### Persistence layer
+| Annotation | Use |
 |-----------|-----|
-| `@Repository` | Marca la interfaz/clase como repositorio Spring |
-| `@Entity` | Marca la clase como entidad JPA |
-| `@Table(name="...")` | Nombre de la tabla en BD |
-| `@Id` | Clave primaria |
-| `@GeneratedValue(strategy=...)` | Generación automática del ID |
-| `@Column(name="...")` | Nombre de la columna cuando difiere del atributo |
-| `@ManyToOne`, `@OneToMany`, `@ManyToMany` | Relaciones entre entidades |
-| `@PersistenceContext` | Inyecta el EntityManager |
+| `@Repository` | Marks the interface/class as a Spring repository |
+| `@Entity` | Marks the class as a JPA entity |
+| `@Table(name="...")` | Table name in the DB |
+| `@Id` | Primary key |
+| `@GeneratedValue(strategy=...)` | Automatic ID generation |
+| `@Column(name="...")` | Column name when it differs from the attribute |
+| `@ManyToOne`, `@OneToMany`, `@ManyToMany` | Relationships between entities |
+| `@PersistenceContext` | Injects the EntityManager |

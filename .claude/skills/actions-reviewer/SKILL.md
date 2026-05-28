@@ -1,74 +1,74 @@
 ---
 name: actions-reviewer
-description: Criterios de revisión de código Java/Spring Boot del proyecto EXAMEN-CESAR. Define qué es BLOCKING (viola arquitectura por capas, mal código de estado HTTP, lógica de negocio en controlador, código que no compila), IMPORTANT (incumple convenciones REST o Spring Boot, tests ausentes) y MINOR (mejora de calidad menor). Cárgalo siempre que revises código del proyecto.
+description: Code review criteria for Java/Spring Boot in the EXAMEN-CESAR project. Defines what is BLOCKING (violates layered architecture, wrong HTTP status code, business logic in controller, code that does not compile), IMPORTANT (violates REST or Spring Boot conventions, missing tests) and MINOR (minor quality improvement). Load it whenever you review project code.
 ---
 # actions-reviewer
-Criterios de revisión de código para EXAMEN-CESAR. Cada problema encontrado **MUST** clasificarse como BLOCKING, IMPORTANT o MINOR según estas reglas.
+Code review criteria for EXAMEN-CESAR. Every problem found **MUST** be classified as BLOCKING, IMPORTANT or MINOR according to these rules.
 ---
-## BLOCKING — Impide aprobar
-Problemas que rompen la funcionalidad, la arquitectura o producen código que no compila.
-### Arquitectura y estructura
-- Un controlador inyecta una clase de `persistence` directamente.
-- Un servicio recibe objetos HTTP (`HttpServletRequest`, `Model`, `HttpServletResponse`).
-- Lógica de negocio (`if/else` de negocio, cálculos) implementada en el controlador.
-- Se documenta o implementa una estructura de paquetes distinta a la adoptada en el proyecto.
-### Diseño REST
-- Verbos en la URL: `/getBooks`, `/createUser`, `/deleteItem`.
-- Códigos de estado semánticamente incorrectos: `POST` que devuelve `200` en vez de `201`, `DELETE` que devuelve `200` en vez de `204`.
-- Endpoint que no empieza por `/api`.
-- Respuesta que no es JSON.
+## BLOCKING — Prevents approval
+Problems that break functionality, architecture or produce code that does not compile.
+### Architecture and structure
+- A controller injects a `persistence` class directly.
+- A service receives HTTP objects (`HttpServletRequest`, `Model`, `HttpServletResponse`).
+- Business logic (`if/else` logic, calculations) implemented in the controller.
+- A package structure different from the one adopted in the project is documented or implemented.
+### REST design
+- Verbs in the URL: `/getBooks`, `/createUser`, `/deleteItem`.
+- Semantically incorrect status codes: `POST` returning `200` instead of `201`, `DELETE` returning `200` instead of `204`.
+- Endpoint that does not start with `/api`.
+- Response that is not JSON.
 ### Spring Boot
-- Excepciones de negocio capturadas en el controlador.
-- Un servicio devuelve una entidad JPA directamente al controlador (no un DTO).
-- Código que no compila (import inexistente, método no encontrado, tipo incompatible).
+- Business exceptions caught in the controller.
+- A service returns a JPA entity directly to the controller (not a DTO).
+- Code that does not compile (missing import, method not found, incompatible type).
 ---
-## IMPORTANT — Incumple convenciones del proyecto
-Problemas que incumplen convenciones establecidas en el CLAUDE.md pero no rompen la funcionalidad inmediatamente.
+## IMPORTANT — Violates project conventions
+Problems that violate conventions established in CLAUDE.md but do not break functionality immediately.
 ### Spring Boot
-- `@Autowired` en campo en vez de inyección por constructor.
-- `@Transactional` en el controlador en vez de en el servicio.
-- Falta `@Valid` en parámetros de entrada que llevan anotaciones de validación.
-- El servicio no tiene interfaz separada de la implementación cuando la convención del módulo la exige.
+- Field-level `@Autowired` instead of constructor injection.
+- `@Transactional` on the controller instead of the service.
+- Missing `@Valid` on input parameters that carry validation annotations.
+- The service has no separate interface from the implementation when the module convention requires it.
 ### Testing
-- Faltan tests unitarios del servicio para la funcionalidad implementada.
-- Tests que dependen del orden de ejecución.
-- No se usa JUnit 5 (`@Test`, `@ExtendWith`) o no se usa AssertJ para aserciones.
-### Nomenclatura
-- Clases que no siguen `PascalCase`.
-- Métodos o variables que no siguen `camelCase`.
-- Endpoints en `camelCase` en vez de `kebab-case`.
-- Recurso en singular en la URL.
+- Missing service unit tests for the implemented functionality.
+- Tests that depend on execution order.
+- JUnit 5 (`@Test`, `@ExtendWith`) not used or AssertJ not used for assertions.
+### Naming
+- Classes not following `PascalCase`.
+- Methods or variables not following `camelCase`.
+- Endpoints in `camelCase` instead of `kebab-case`.
+- Singular resource in the URL.
 ---
-## MINOR — Mejora de calidad
-Problemas menores que no incumplen convenciones críticas pero mejoran la calidad.
-- Imports sin usar.
-- Métodos privados sin usar (código muerto).
-- Falta `@DisplayName` en tests.
-- Uso de `assertEquals` en vez de `assertThat(...).isEqualTo(...)` de AssertJ.
-- Comentarios innecesarios o desactualizados.
-- Mezcla de `when/thenReturn` y `given/willReturn` de Mockito en el mismo test.
+## MINOR — Quality improvement
+Minor issues that do not violate critical conventions but improve quality.
+- Unused imports.
+- Unused private methods (dead code).
+- Missing `@DisplayName` in tests.
+- Using `assertEquals` instead of `assertThat(...).isEqualTo(...)` from AssertJ.
+- Unnecessary or outdated comments.
+- Mixing `when/thenReturn` and `given/willReturn` from Mockito in the same test.
 ---
-## Checklist de revisión completo
-Antes de emitir el veredicto, verifica cada punto:
-**Arquitectura:**
-- [ ] ¿El controlador solo delega al servicio sin lógica de negocio?
-- [ ] ¿El controlador no inyecta clases de `persistence`?
-- [ ] ¿El servicio no recibe objetos HTTP?
-- [ ] ¿Las entidades JPA no se exponen directamente en la respuesta del endpoint?
+## Full review checklist
+Before issuing the verdict, verify each point:
+**Architecture:**
+- [ ] Does the controller only delegate to the service without business logic?
+- [ ] Does the controller not inject `persistence` classes?
+- [ ] Does the service not receive HTTP objects?
+- [ ] Are JPA entities not exposed directly in the endpoint response?
 **REST:**
-- [ ] ¿Los endpoints usan sustantivos en plural?
-- [ ] ¿Los endpoints empiezan por `/api`?
-- [ ] ¿`POST` devuelve `201`? ¿`DELETE` devuelve `204`? ¿`GET`/`PUT`/`PATCH` devuelven `200`?
-- [ ] ¿Las respuestas son JSON?
+- [ ] Do endpoints use plural nouns?
+- [ ] Do endpoints start with `/api`?
+- [ ] Does `POST` return `201`? Does `DELETE` return `204`? Do `GET`/`PUT`/`PATCH` return `200`?
+- [ ] Are responses JSON?
 **Spring Boot:**
-- [ ] ¿Inyección por constructor en todos los beans?
-- [ ] ¿`@Valid` en parámetros de entrada que lo necesitan?
-- [ ] ¿Las excepciones de negocio no se capturan en el controlador?
-- [ ] ¿Los servicios siguen la convención interfaz/implementación del módulo?
+- [ ] Constructor injection in all beans?
+- [ ] `@Valid` on input parameters that need it?
+- [ ] Business exceptions not caught in the controller?
+- [ ] Services follow the interface/implementation convention of the module?
 **Testing:**
-- [ ] ¿Hay tests unitarios del servicio?
-- [ ] ¿Se usa JUnit 5 y AssertJ?
-- [ ] ¿Los tests siguen el patrón Given/When/Then?
-**Código:**
-- [ ] ¿El código compila sin errores?
-- [ ] ¿No hay imports muertos ni código muerto?
+- [ ] Are there service unit tests?
+- [ ] Is JUnit 5 and AssertJ used?
+- [ ] Do tests follow the Given/When/Then pattern?
+**Code:**
+- [ ] Does the code compile without errors?
+- [ ] No dead imports or dead code?

@@ -1,16 +1,16 @@
 # AGENTS.md — EXAMEN-CESAR
 
-## Principio de trabajo
+## Working principle
 
-Antes de generar código o documentación:
+Before generating code or documentation:
 
-- revisar la estructura real del repositorio local
-- contrastarla con la referencia
-- no inventar paquetes, capas ni flujos
+- review the actual local repository structure
+- compare it against the reference
+- do not invent packages, layers or flows
 
-## Arquitectura de referencia
+## Reference architecture
 
-La referencia se organiza así:
+The reference is organised as follows:
 
 ```text
 src/main/java/com/.../
@@ -33,40 +33,40 @@ src/main/java/com/.../
     └── repository/
 ```
 
-## Lectura correcta de esa estructura
+## Correct reading of that structure
 
-- `controller` expone endpoints.
-- `domain` concentra modelo, contratos y servicios.
-- `persistence` implementa acceso a datos y adapta JPA.
-- `mapper` centraliza conversiones.
-- `exception` reúne excepciones reutilizables.
-- `config` contiene configuración de Spring.
+- `controller` exposes endpoints.
+- `domain` concentrates the model, contracts and services.
+- `persistence` implements data access and adapts JPA.
+- `mapper` centralises conversions.
+- `exception` groups reusable exceptions.
+- `config` holds Spring configuration.
 
-## Instrucciones para agentes
+## Instructions for agents
 
-- No describir la arquitectura como `presentation/application/infrastructure` si el proyecto no la usa.
-- Si se implementa una funcionalidad nueva, respetar el recorrido `controller -> domain/service -> domain/repository -> persistence`.
-- Si hace falta DTO, ubicarlo en `domain/service/dto` salvo que el repositorio local adopte otra convención explícita.
-- Si hace falta implementación de servicio, ubicarla en `domain/service/impl`.
-- Si hace falta adaptación JPA, separar `dao/jpa/entity`, `dao/jpa/impl` y `persistence/repository`.
-- Si una clase de la referencia está vacía o incompleta, usarla solo como pista de ubicación, no como modelo de calidad.
+- Do not describe the architecture as `presentation/application/infrastructure` if the project does not use it.
+- When implementing a new feature, follow the flow `controller -> domain/service -> domain/repository -> persistence`.
+- If a DTO is needed, place it in `domain/service/dto` unless the local repository adopts a different explicit convention.
+- If a service implementation is needed, place it in `domain/service/impl`.
+- If JPA adaptation is needed, separate `dao/jpa/entity`, `dao/jpa/impl` and `persistence/repository`.
+- If a reference class is empty or incomplete, use it only as a location hint, not as a quality model.
 
-## Convenciones mínimas
+## Minimum conventions
 
-- Inyección por constructor.
-- Controladores sin lógica de negocio.
-- Excepciones de negocio fuera del controlador.
-- Mapeos fuera del controlador.
-- Código compilable siempre.
+- Constructor injection.
+- Controllers without business logic.
+- Business exceptions outside the controller.
+- Mappings outside the controller.
+- Code must always compile.
 
 ## Testing
 
-Seguir el ejemplo de carpetas del repositorio de referencia:
+Follow the folder example from the reference repository:
 
-- `src/test/java/.../domain/service/impl/` para unitarios de servicio
-- `src/test/java/.../persistence/repository/` para persistencia
-- `src/test/resources/` para configuración y datos de prueba
+- `src/test/java/.../domain/service/impl/` for service unit tests
+- `src/test/java/.../persistence/repository/` for persistence tests
+- `src/test/resources/` for test configuration and data
 
-## Restricción
+## Restriction
 
-Si la documentación local contradice la estructura observada en el repositorio de referencia, debe corregirse antes de seguir generando más código.
+If the local documentation contradicts the structure observed in the reference repository, it must be corrected before generating more code.

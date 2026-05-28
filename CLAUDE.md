@@ -1,17 +1,17 @@
 # CLAUDE.md — EXAMEN-CESAR
 
-Estas instrucciones describen cómo trabajar en este repositorio tomando como referencia estructural.
+These instructions describe how to work in this repository using the reference structure.
 
-## Objetivo
+## Goal
 
-Construir un backend Spring Boot didáctico y mantenible para practicar:
+Build a didactic and maintainable Spring Boot backend to practise:
 
-- APIs REST
-- separación de responsabilidades
-- persistencia con JPA
-- testing de servicios y persistencia
+- REST APIs
+- separation of concerns
+- persistence with JPA
+- service and persistence testing
 
-## Stack esperado
+## Expected stack
 
 - Java 17
 - Spring Boot 3.x
@@ -21,13 +21,13 @@ Construir un backend Spring Boot didáctico y mantenible para practicar:
 - Jakarta Validation
 - JUnit 5 + Mockito + AssertJ
 
-## Regla principal
+## Main rule
 
-No describir ni implementar una arquitectura distinta a la que se esté usando realmente en el proyecto. Si falta contexto funcional, parar y pedirlo.
+Do not describe or implement an architecture different from the one actually used in the project. If functional context is missing, stop and ask for it.
 
-## Estructura a seguir
+## Structure to follow
 
-La referencia no usa la estructura `presentation/application/infrastructure` que se había documentado antes. La estructura que debe tomarse como base es esta:
+The reference does not use the `presentation/application/infrastructure` structure previously documented. The structure to use as a base is:
 
 ```text
 com.examencesar/
@@ -50,53 +50,52 @@ com.examencesar/
     └── repository/
 ```
 
-## Responsabilidades
+## Responsibilities
 
-- `controller`: recibe HTTP, valida entrada y delega al servicio.
-- `domain/model`: representa entidades y objetos del dominio.
-- `domain/repository`: contratos que necesita el dominio.
-- `domain/service`: interfaz de casos de uso.
-- `domain/service/impl`: implementación de lógica de negocio.
-- `domain/service/dto`: DTOs de entrada y salida.
-- `mapper`: conversiones entre JPA, DTOs y modelos.
-- `persistence/dao`: operaciones JPA y acceso de bajo nivel.
-- `persistence/repository`: implementación de contratos de `domain/repository`.
-- `config`: configuración de Spring.
-- `exception`: excepciones de negocio y de recurso no encontrado.
+- `controller`: receives HTTP, validates input and delegates to the service.
+- `domain/model`: represents domain entities and objects.
+- `domain/repository`: contracts the domain needs.
+- `domain/service`: use-case interface.
+- `domain/service/impl`: business logic implementation.
+- `domain/service/dto`: input and output DTOs.
+- `mapper`: conversions between JPA, DTOs and models.
+- `persistence/dao`: JPA operations and low-level access.
+- `persistence/repository`: implementation of `domain/repository` contracts.
+- `config`: Spring configuration.
+- `exception`: business and resource-not-found exceptions.
 
-## Reglas de implementación
+## Implementation rules
 
-- Usar inyección por constructor.
-- Evitar `@Autowired` en campo.
-- No meter lógica de negocio en el controlador.
-- No acceder desde controlador directamente a persistencia.
-- No devolver entidades de persistencia sin mapear si el caso pide DTO.
-- Mantener los mapeos fuera del controlador.
-- Si se añade validación, ubicarla de forma coherente con `domain/validation`.
-- Si se crean adaptadores JPA, separarlos de los contratos del dominio.
+- Use constructor injection.
+- Avoid field-level `@Autowired`.
+- Do not put business logic in the controller.
+- Do not access persistence directly from the controller.
+- Do not return unmapped persistence entities when the use case requires a DTO.
+- Keep mappings outside the controller.
+- If validation is added, place it consistently with `domain/validation`.
+- If JPA adapters are created, keep them separate from the domain contracts.
 
 ## REST
 
-- Endpoints bajo `/api` cuando se exponga API pública.
-- Recursos con sustantivos.
-- `GET` devuelve `200`.
-- `POST` devuelve `201` cuando crea recurso.
-- `DELETE` devuelve `204` cuando elimina sin cuerpo.
+- Endpoints under `/api` when exposing a public API.
+- Resources with nouns.
+- `GET` returns `200`.
+- `POST` returns `201` when creating a resource.
+- `DELETE` returns `204` when deleting without a body.
 
 ## Testing
 
-- Tests unitarios de modelo en `src/test/java/.../domain/`: sin mocks, `@ParameterizedTest` + `@CsvSource` para múltiples escenarios.
-- Tests unitarios de mapeadores en `src/test/java/.../mapper/`: sin mocks, patrón Arrange/Act/Assert, `assertAll` para todos los campos; probar que mapear `null` lanza `BusinessException`.
-- Tests unitarios de servicios en `src/test/java/.../domain/service/impl/`: `@ExtendWith(MockitoExtension.class)`, `@Mock` sobre el repositorio de dominio, `@InjectMocks` sobre el servicio, `Mockito.verify()` para confirmar interacciones.
-- Tests de validación de DTOs en `src/test/java/.../domain/service/dto/`: `@ParameterizedTest` + `@CsvSource`, verificar que datos inválidos lanzan `ValidationException` vía `DtoValidator.validate(dto)`.
-- Tests de persistencia (DAO JPA) en `src/test/java/.../persistence/dao/jpa/impl/`: `@DataJpaTest` + `@ContextConfiguration(TestConfig.class)` + `@AutoConfigureTestDatabase(replace = NONE)`, H2 en memoria, `@PersistenceContext EntityManager` para preparar datos, `assertAll` para verificar resultados.
-- `TestConfig` en `src/test/java/.../persistence/`: clase `@Configuration` con `@EnableJpaRepositories`, `@EntityScan` y `@Bean` por cada DAO JPA.
-- Migraciones Flyway en `src/main/resources/db/migration/` con formato `V1__init.sql`, `V2__insert_data.sql`, etc.; configuración H2 en `src/test/resources/application-test.properties`.
+- Unit tests for models in `src/test/java/.../domain/`: no mocks, `@ParameterizedTest` + `@CsvSource` for multiple scenarios.
+- Unit tests for mappers in `src/test/java/.../mapper/`: no mocks, Arrange/Act/Assert pattern, `assertAll` for all fields; test that mapping `null` throws `BusinessException`.
+- Unit tests for services in `src/test/java/.../domain/service/impl/`: `@ExtendWith(MockitoExtension.class)`, `@Mock` on the domain repository, `@InjectMocks` on the service, `Mockito.verify()` to confirm interactions.
+- DTO validation tests in `src/test/java/.../domain/service/dto/`: `@ParameterizedTest` + `@CsvSource`, verify that invalid data throws `ValidationException` via `DtoValidator.validate(dto)`.
+- Persistence tests (JPA DAO) in `src/test/java/.../persistence/dao/jpa/impl/`: `@DataJpaTest` + `@ContextConfiguration(TestConfig.class)` + `@AutoConfigureTestDatabase(replace = NONE)`, H2 in-memory, `@PersistenceContext EntityManager` to set up data, `assertAll` to verify results.
+- `TestConfig` in `src/test/java/.../persistence/`: `@Configuration` class with `@EnableJpaRepositories`, `@EntityScan` and a `@Bean` per JPA DAO.
+- Flyway migrations in `src/main/resources/db/migration/` with the format `V1__init.sql`, `V2__insert_data.sql`, etc.; H2 configuration in `src/test/resources/application-test.properties`.
 
+## What to avoid
 
-## Qué evitar
-
-- Inventar paquetes que no existen en la línea arquitectónica elegida.
-- Mezclar contrato de dominio con detalle JPA en la misma clase.
-- Documentar como obligatoria una capa que el proyecto no usa.
-- Reescribir la arquitectura sin autorización explícita.
+- Inventing packages that do not exist in the chosen architectural line.
+- Mixing the domain contract with JPA detail in the same class.
+- Documenting as mandatory a layer the project does not use.
+- Rewriting the architecture without explicit authorisation.

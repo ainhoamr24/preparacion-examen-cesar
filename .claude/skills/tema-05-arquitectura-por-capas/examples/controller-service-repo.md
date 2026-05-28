@@ -1,6 +1,6 @@
-<!-- Ejemplos del Tema 05. Código Java de cada capa: controlador REST con @RestController, servicio con interfaz e implementación, interfaz de repositorio en dominio (inversión de dependencias) e implementación en persistencia. -->
-# Ejemplos: Código por Capa
-## Capa de presentación — Controlador
+<!-- Examples for Topic 05. Java code for each layer: REST controller with @RestController, service with interface and implementation, domain repository interface (dependency inversion) and persistence implementation. -->
+# Examples: Code per Layer
+## Presentation layer — Controller
 ```java
 @RestController
 @RequestMapping("/api/books")
@@ -19,14 +19,14 @@ public class BookController {
     }
 }
 ```
-## Capa de dominio — Servicio (interfaz + implementación)
+## Domain layer — Service (interface + implementation)
 ```java
-// Interfaz — en domain/service/
+// Interface — in domain/service/
 public interface BookService {
     List<Book> getAll(int page, int size);
     Book findByIsbn(String isbn);
 }
-// Implementación — en domain/service/impl/
+// Implementation — in domain/service/impl/
 public class BookServiceImpl implements BookService {
     private final BookRepository bookRepository;
     public BookServiceImpl(BookRepository bookRepository) {
@@ -43,25 +43,25 @@ public class BookServiceImpl implements BookService {
     }
 }
 ```
-## Capa de dominio — Interfaz de repositorio (inversión de dependencias)
+## Domain layer — Repository interface (dependency inversion)
 ```java
-// Interfaz en domain/repository/ — la implementación va en persistencia
+// Interface in domain/repository/ — implementation goes in persistence
 public interface BookRepository {
     List<BookEntity> findAll(int page, int size);
     Optional<BookEntity> findByIsbn(String isbn);
 }
 ```
-## Capa de persistencia — Implementación del repositorio
+## Persistence layer — Repository implementation
 ```java
-// Implementa la interfaz de dominio
+// Implements the domain interface
 public class BookRepositoryImpl implements BookRepository {
     @Override
     public List<BookEntity> findAll(int page, int size) {
-        // Conectar con el origen de datos y recuperar libros
+        // Connect to the data source and retrieve books
     }
     @Override
     public Optional<BookEntity> findByIsbn(String isbn) {
-        // Buscar libro por ISBN
+        // Find book by ISBN
     }
 }
 ```

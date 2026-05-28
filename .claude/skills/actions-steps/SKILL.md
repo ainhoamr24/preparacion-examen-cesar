@@ -1,133 +1,133 @@
 ---
 name: actions-steps
-description: Guía de implementación paso a paso para el proyecto EXAMEN-CESAR. Define el orden correcto de implementación siguiendo la estructura de `controller`, `domain`, `mapper` y `persistence`, cómo verificar cada paso y qué comprobar antes de darlo por completado. Cárgalo siempre que implementes una nueva funcionalidad.
+description: Step-by-step implementation guide for the EXAMEN-CESAR project. Defines the correct implementation order following the `controller`, `domain`, `mapper` and `persistence` structure, how to verify each step and what to check before marking it as complete. Load it whenever you implement a new feature.
 ---
 # actions-steps
-Guía de implementación de EXAMEN-CESAR. Define el orden y los pasos concretos para implementar cualquier funcionalidad nueva.
+Implementation guide for EXAMEN-CESAR. Defines the order and concrete steps to implement any new feature.
 ---
-## Orden obligatorio de implementación
-Implementa siempre en este orden:
+## Mandatory implementation order
+Always implement in this order:
 ```text
-1. Modelo de dominio (`domain/model/`)
-2. DTOs y contratos (`domain/service/dto/`, `domain/repository/`)
-3. Servicio: interfaz + implementación (`domain/service/`, `domain/service/impl/`)
-4. Mapper (`mapper/`) si hace falta conversión
-5. Persistencia (`persistence/dao/...`, `persistence/repository/`)
-6. Controlador REST (`controller/`) si la funcionalidad expone HTTP
-7. Excepciones o validaciones compartidas (`exception/`, `domain/validation/`) si hacen falta
-8. Tests unitarios y de persistencia
+1. Domain model (`domain/model/`)
+2. DTOs and contracts (`domain/service/dto/`, `domain/repository/`)
+3. Service: interface + implementation (`domain/service/`, `domain/service/impl/`)
+4. Mapper (`mapper/`) if conversion is needed
+5. Persistence (`persistence/dao/...`, `persistence/repository/`)
+6. REST controller (`controller/`) if the feature exposes HTTP
+7. Shared exceptions or validations (`exception/`, `domain/validation/`) if needed
+8. Unit and persistence tests
 ```
 ---
-## Paso 1 — Modelo de dominio
-Crea el modelo en `src/main/java/com/examencesar/domain/model/`:
+## Step 1 — Domain model
+Create the model in `src/main/java/com/examencesar/domain/model/`:
 ```java
-public class <Entidad> {
+public class <Entity> {
     private Long id;
-    private String <campo>;
+    private String <field>;
 }
 ```
-**Verifica:** la clase representa el dominio y no depende de HTTP.
+**Verify:** the class represents the domain and does not depend on HTTP.
 ---
-## Paso 2 — Contratos y DTOs
-Crea el contrato del repositorio en `src/main/java/com/examencesar/domain/repository/`:
+## Step 2 — Contracts and DTOs
+Create the repository contract in `src/main/java/com/examencesar/domain/repository/`:
 ```java
-public interface <Recurso>Repository {
-    Optional<<Recurso>Dto> findById(Long id);
-    <Recurso>Dto save(<Recurso>Dto dto);
+public interface <Resource>Repository {
+    Optional<<Resource>Dto> findById(Long id);
+    <Resource>Dto save(<Resource>Dto dto);
 }
 ```
-Crea los DTOs en `src/main/java/com/examencesar/domain/service/dto/`:
+Create DTOs in `src/main/java/com/examencesar/domain/service/dto/`:
 ```java
-public record <Recurso>Dto(Long id, String <campo>) {}
+public record <Resource>Dto(Long id, String <field>) {}
 ```
-**Verifica:** contratos y DTOs están en dominio, no en paquetes inventados.
+**Verify:** contracts and DTOs are in the domain, not in invented packages.
 ---
-## Paso 3 — Servicio
-### Interfaz en `src/main/java/com/examencesar/domain/service/`:
+## Step 3 — Service
+### Interface in `src/main/java/com/examencesar/domain/service/`:
 ```java
-public interface <Recurso>Service {
-    List<<Recurso>Dto> findAll();
-    Optional<<Recurso>Dto> findById(Long id);
-    <Recurso>Dto create(<Recurso>Dto dto);
-    <Recurso>Dto update(<Recurso>Dto dto);
+public interface <Resource>Service {
+    List<<Resource>Dto> findAll();
+    Optional<<Resource>Dto> findById(Long id);
+    <Resource>Dto create(<Resource>Dto dto);
+    <Resource>Dto update(<Resource>Dto dto);
     void deleteById(Long id);
 }
 ```
-### Implementación en `src/main/java/com/examencesar/domain/service/impl/`:
+### Implementation in `src/main/java/com/examencesar/domain/service/impl/`:
 ```java
-public class <Recurso>ServiceImpl implements <Recurso>Service {
-    private final <Recurso>Repository repository;
+public class <Resource>ServiceImpl implements <Resource>Service {
+    private final <Resource>Repository repository;
 
-    public <Recurso>ServiceImpl(<Recurso>Repository repository) {
+    public <Resource>ServiceImpl(<Resource>Repository repository) {
         this.repository = repository;
     }
 }
 ```
-**Verifica:** el servicio usa contratos de `domain/repository` y no depende del controlador.
+**Verify:** the service uses `domain/repository` contracts and does not depend on the controller.
 ---
-## Paso 4 — Mapper
-Si hace falta conversión, crea un mapper en `src/main/java/com/examencesar/mapper/`:
+## Step 4 — Mapper
+If conversion is needed, create a mapper in `src/main/java/com/examencesar/mapper/`:
 ```java
-public class <Recurso>Mapper {
-    private static <Recurso>Mapper INSTANCE;
+public class <Resource>Mapper {
+    private static <Resource>Mapper INSTANCE;
 
-    public static <Recurso>Mapper getInstance() {
+    public static <Resource>Mapper getInstance() {
         if (INSTANCE == null) {
-            INSTANCE = new <Recurso>Mapper();
+            INSTANCE = new <Resource>Mapper();
         }
         return INSTANCE;
     }
 }
 ```
-**Verifica:** el mapper centraliza conversiones y no contiene lógica de negocio.
+**Verify:** the mapper centralises conversions and contains no business logic.
 ---
-## Paso 5 — Persistencia
-La persistencia se reparte en:
+## Step 5 — Persistence
+Persistence is split across:
 
 - `src/main/java/com/examencesar/persistence/dao/jpa/entity/`
 - `src/main/java/com/examencesar/persistence/dao/jpa/impl/`
 - `src/main/java/com/examencesar/persistence/repository/`
 
-Ejemplo:
+Example:
 ```java
-public class <Recurso>RepositoryImpl implements <Recurso>Repository {
-    private final <Recurso>JpaDao <recurso>JpaDao;
+public class <Resource>RepositoryImpl implements <Resource>Repository {
+    private final <Resource>JpaDao <resource>JpaDao;
 
-    public <Recurso>RepositoryImpl(<Recurso>JpaDao <recurso>JpaDao) {
-        this.<recurso>JpaDao = <recurso>JpaDao;
+    public <Resource>RepositoryImpl(<Resource>JpaDao <resource>JpaDao) {
+        this.<resource>JpaDao = <resource>JpaDao;
     }
 }
 ```
-**Verifica:** la implementación de persistencia queda fuera del dominio.
+**Verify:** the persistence implementation stays outside the domain.
 ---
-## Paso 6 — Controlador REST
-Si la funcionalidad expone HTTP, crea el controlador en `src/main/java/com/examencesar/controller/`:
+## Step 6 — REST controller
+If the feature exposes HTTP, create the controller in `src/main/java/com/examencesar/controller/`:
 ```java
 @RestController
-@RequestMapping("/api/<recursos>")
-public class <Recurso>Controller {
-    private final <Recurso>Service <recurso>Service;
+@RequestMapping("/api/<resources>")
+public class <Resource>Controller {
+    private final <Resource>Service <resource>Service;
 }
 ```
-**Verifica:** el controlador delega y no accede a `persistence`.
+**Verify:** the controller delegates and does not access `persistence`.
 ---
-## Paso 7 — Tests
-Tests unitarios del servicio en `src/test/java/com/examencesar/domain/service/impl/`:
+## Step 7 — Tests
+Service unit tests in `src/test/java/com/examencesar/domain/service/impl/`:
 ```java
 @ExtendWith(MockitoExtension.class)
-class <Recurso>ServiceTest {
+class <Resource>ServiceTest {
     @Mock
-    private <Recurso>Repository repository;
+    private <Resource>Repository repository;
 
     @InjectMocks
-    private <Recurso>ServiceImpl service;
+    private <Resource>ServiceImpl service;
 }
 ```
-Tests de persistencia en `src/test/java/com/examencesar/persistence/repository/`.
+Persistence tests in `src/test/java/com/examencesar/persistence/repository/`.
 ---
-## Verificación final de cada paso
-Antes de marcar un paso como completado, comprueba:
-- [ ] ¿El código compila? (`./mvnw compile`)
-- [ ] ¿No hay imports sin usar?
-- [ ] ¿La clase está en el paquete correcto según la estructura del proyecto?
-- [ ] ¿Los tests del paso pasan?
+## Final verification for each step
+Before marking a step as complete, check:
+- [ ] Does the code compile? (`./mvnw compile`)
+- [ ] No unused imports?
+- [ ] Is the class in the correct package according to the project structure?
+- [ ] Do the step's tests pass?
