@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(grep -r \"examen-cesar\" /Users/rares/.claude/projects/-Users-rares-Desktop-examen-cesar/ -l 2>/dev/null; find /Users/rares/.claude -name \"*examen*\" 2>/dev/null)"
+    ]
+  }
+}
