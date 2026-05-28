@@ -1,4 +1,4 @@
-package preparacion_exames_cesar;
+package examen_cesar;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

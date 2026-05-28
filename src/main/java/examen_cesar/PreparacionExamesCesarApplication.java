@@ -1,4 +1,4 @@
-package preparacion_exames_cesar;
+package examen_cesar;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
