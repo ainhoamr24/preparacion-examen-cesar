@@ -85,11 +85,14 @@ com.examencesar/
 
 ## Testing
 
-Tomar como referencia la distribución de tests del repositorio ejemplo:
+- Tests unitarios de modelo en `src/test/java/.../domain/`: sin mocks, `@ParameterizedTest` + `@CsvSource` para múltiples escenarios.
+- Tests unitarios de mapeadores en `src/test/java/.../mapper/`: sin mocks, patrón Arrange/Act/Assert, `assertAll` para todos los campos; probar que mapear `null` lanza `BusinessException`.
+- Tests unitarios de servicios en `src/test/java/.../domain/service/impl/`: `@ExtendWith(MockitoExtension.class)`, `@Mock` sobre el repositorio de dominio, `@InjectMocks` sobre el servicio, `Mockito.verify()` para confirmar interacciones.
+- Tests de validación de DTOs en `src/test/java/.../domain/service/dto/`: `@ParameterizedTest` + `@CsvSource`, verificar que datos inválidos lanzan `ValidationException` vía `DtoValidator.validate(dto)`.
+- Tests de persistencia (DAO JPA) en `src/test/java/.../persistence/dao/jpa/impl/`: `@DataJpaTest` + `@ContextConfiguration(TestConfig.class)` + `@AutoConfigureTestDatabase(replace = NONE)`, H2 en memoria, `@PersistenceContext EntityManager` para preparar datos, `assertAll` para verificar resultados.
+- `TestConfig` en `src/test/java/.../persistence/`: clase `@Configuration` con `@EnableJpaRepositories`, `@EntityScan` y `@Bean` por cada DAO JPA.
+- Migraciones Flyway en `src/main/resources/db/migration/` con formato `V1__init.sql`, `V2__insert_data.sql`, etc.; configuración H2 en `src/test/resources/application-test.properties`.
 
-- tests unitarios de servicios en `src/test/java/.../domain/service/impl/`
-- tests de persistencia en `src/test/java/.../persistence/repository/`
-- configuración de soporte de tests en `src/test/java/.../persistence/`
 
 ## Qué evitar
 
