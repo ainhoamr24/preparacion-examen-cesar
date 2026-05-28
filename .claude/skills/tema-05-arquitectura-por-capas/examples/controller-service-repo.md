@@ -1,6 +1,6 @@
 <!-- Ejemplos del Tema 05. Código Java de cada capa: controlador REST con @RestController, servicio con interfaz e implementación, interfaz de repositorio en dominio (inversión de dependencias) e implementación en persistencia. -->
 # Ejemplos: Código por Capa
-## Controlador
+## Capa de presentación — Controlador
 ```java
 @RestController
 @RequestMapping("/api/books")
@@ -13,51 +13,55 @@ public class BookController {
     public List<Book> getAll() {
         return bookService.getAll();
     }
-    @GetMapping("/{id}")
-    public BookDto findById(@PathVariable Long id) {
-        return bookService.findById(id).orElseThrow(() -> new ResourceNotFoundException("Book not found"));
+    @GetMapping("/{isbn}")
+    public Book findByIsbn(@PathVariable String isbn) {
+        return bookService.findByIsbn(isbn);
     }
 }
 ```
-## Servicio de dominio
+## Capa de dominio — Servicio (interfaz + implementación)
 ```java
+// Interfaz — en domain/service/
 public interface BookService {
-    Page<BookDto> findAll(int page, int size);
-    Optional<BookDto> findById(Long id);
+    List<Book> getAll(int page, int size);
+    Book findByIsbn(String isbn);
 }
-
+// Implementación — en domain/service/impl/
 public class BookServiceImpl implements BookService {
     private final BookRepository bookRepository;
     public BookServiceImpl(BookRepository bookRepository) {
         this.bookRepository = bookRepository;
     }
     @Override
-    public Page<BookDto> findAll(int page, int size) {
+    public List<Book> getAll(int page, int size) {
         return bookRepository.findAll(page, size);
     }
     @Override
-    public Optional<BookDto> findById(Long id) {
-        return bookRepository.findById(id);
+    public Book findByIsbn(String isbn) {
+        return bookRepository.findByIsbn(isbn)
+            .orElseThrow(() -> new ResourceNotFoundException("Book not found: " + isbn));
     }
 }
 ```
-## Repositorio de dominio
+## Capa de dominio — Interfaz de repositorio (inversión de dependencias)
 ```java
+// Interfaz en domain/repository/ — la implementación va en persistencia
 public interface BookRepository {
-    Page<BookDto> findAll(int page, int size);
-    Optional<BookDto> findById(Long id);
+    List<BookEntity> findAll(int page, int size);
+    Optional<BookEntity> findByIsbn(String isbn);
 }
 ```
-## Implementación en persistencia
+## Capa de persistencia — Implementación del repositorio
 ```java
+// Implementa la interfaz de dominio
 public class BookRepositoryImpl implements BookRepository {
     @Override
-    public Page<BookDto> findAll(int page, int size) {
-        // Adaptar datos JPA al contrato del dominio
+    public List<BookEntity> findAll(int page, int size) {
+        // Conectar con el origen de datos y recuperar libros
     }
     @Override
-    public Optional<BookDto> findById(Long id) {
-        // Buscar libro por id
+    public Optional<BookEntity> findByIsbn(String isbn) {
+        // Buscar libro por ISBN
     }
 }
 ```
