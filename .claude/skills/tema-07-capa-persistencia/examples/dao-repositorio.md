@@ -68,17 +68,17 @@ public class BookRepositoryImpl implements BookRepository {
         this.bookJpaDao = bookJpaDao;
     }
     @Override
-    public Optional<BookEntity> findByIsbn(String isbn) {
+    public Optional<BookDto> findByIsbn(String isbn) {
         return bookJpaDao.findByIsbn(isbn)
-            .map(BookMapper.INSTANCE::fromBookJpaEntityToBookEntity);
+            .map(BookMapper.getInstance()::fromBookJpaEntityToBookDto);
     }
     @Override
-    public BookEntity save(BookEntity bookEntity) {
-        BookJpaEntity jpa = BookMapper.INSTANCE.fromBookEntityToBookJpaEntity(bookEntity);
-        if (bookEntity.id() == null) {
-            return BookMapper.INSTANCE.fromBookJpaEntityToBookEntity(bookJpaDao.insert(jpa));
+    public BookDto save(BookDto bookDto) {
+        BookJpaEntity jpa = BookMapper.getInstance().fromBookDtoToBookJpaEntity(bookDto);
+        if (bookDto.id() == null) {
+            return BookMapper.getInstance().fromBookJpaEntityToBookDto(bookJpaDao.insert(jpa));
         }
-        return BookMapper.INSTANCE.fromBookJpaEntityToBookEntity(bookJpaDao.update(jpa));
+        return BookMapper.getInstance().fromBookJpaEntityToBookDto(bookJpaDao.update(jpa));
     }
 }
 ```

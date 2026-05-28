@@ -13,7 +13,7 @@ description: Conocimiento del Tema 05 sobre Arquitectura por Capas. Cubre el pat
 ## Las tres capas básicas
 ```
 ┌──────────────────────────┐
-│   controller (presentation) │  Gestiona HTTP: recibe, delega, responde
+│        controller           │  Gestiona HTTP: recibe, delega, responde
 ├──────────────────────────┤
 │         domain           │  Lógica de negocio, modelos, servicios
 ├──────────────────────────┤

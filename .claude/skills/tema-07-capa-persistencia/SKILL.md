@@ -1,7 +1,7 @@
 <!-- Skill principal del Tema 07. Define el conocimiento sobre la capa de persistencia: patrón DAO con interfaz genérica y DAOs específicos, anotaciones JPA, EntityManager, los tres tipos de acceso a datos (JPQL, Native SQL, Criteria API), mapeadores con MapStruct y testing con H2 y Flyway. -->
 ---
 name: tema-07-capa-persistencia
-description: Conocimiento del Tema 07 sobre la Capa de Persistencia. Cubre el patrón DAO con interfaces genéricas, Jakarta Persistence (JPA) con sus anotaciones (@Entity, @Table, @Id, @GeneratedValue, @Column, @ManyToOne, @OneToMany, @ManyToMany, @JoinTable), el EntityManager y sus operaciones CRUD, los tres métodos de acceso a datos (JPQL, Native SQL, Criteria API), los mapeadores con MapStruct, y el testing de persistencia con H2 y Flyway usando @DataJpaTest. Cárgalo para cualquier pregunta o implementación sobre JPA, repositorios o la capa de persistencia.
+description: Conocimiento del Tema 07 sobre la capa de persistencia. Cubre DAOs, entidades JPA, `EntityManager`, repositorios adaptadores y testing de persistencia con H2 y Flyway. Cárgalo para cualquier pregunta o implementación sobre JPA, repositorios o la capa de persistencia.
 ---
 # Tema 07 — Capa de Persistencia
 ## Ficheros de este skill
@@ -29,14 +29,11 @@ public interface GenericDao<T> {
     long count();
 }
 ```
-### DAOs específicos (extienden GenericDao)
+### DAOs específicos
 ```java
-public interface BookDao extends GenericDao<BookEntity> {
-    Optional<BookEntity> findByIsbn(String isbn);
+public interface BookJpaDao extends GenericDao<BookJpaEntity> {
+    Optional<BookJpaEntity> findByIsbn(String isbn);
     void deleteByIsbn(String isbn);
-}
-public interface PublisherDao extends GenericDao<PublisherEntity> {
-    Optional<PublisherEntity> findBySlug(String slug);
 }
 ```
 ---
@@ -50,11 +47,11 @@ class BookJpaDaoImplTest {
     @Autowired private BookJpaDao bookJpaDao;
 }
 ```
-Configuración BD en memoria (`application-test.properties`):
+Configuración BD en memoria de tests:
 ```properties
 spring.datasource.url=jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;
 spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.H2Dialect
 spring.jpa.hibernate.ddl-auto=none
 spring.jpa.show-sql=true
 ```
-Flyway ejecuta scripts de `src/main/resources/db/migration/` con formato `V1__init.sql`, `V2__datos.sql`.
+Flyway puede ejecutar scripts de `src/test/resources/db/migration/` cuando el proyecto lo configure así.

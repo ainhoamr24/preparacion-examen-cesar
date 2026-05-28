@@ -1,234 +1,133 @@
 ---
 name: actions-steps
-description: Guía de implementación paso a paso para el proyecto EXAMEN-CESAR. Define el orden correcto de implementación de una funcionalidad (entidad → repositorio → servicio → controlador → tests), los pasos concretos de cada capa, cómo verificar que cada paso es correcto y qué comprobar antes de dar un paso por completado. Cárgalo siempre que implementes una nueva funcionalidad.
+description: Guía de implementación paso a paso para el proyecto EXAMEN-CESAR. Define el orden correcto de implementación siguiendo la estructura de `controller`, `domain`, `mapper` y `persistence`, cómo verificar cada paso y qué comprobar antes de darlo por completado. Cárgalo siempre que implementes una nueva funcionalidad.
 ---
 # actions-steps
 Guía de implementación de EXAMEN-CESAR. Define el orden y los pasos concretos para implementar cualquier funcionalidad nueva.
 ---
 ## Orden obligatorio de implementación
-Implementa siempre en este orden. **MUST NOT** saltarte ninguna capa ni implementarlas en orden diferente.
-```
-1. Entidad de dominio (domain/)
-2. Repositorio JPA (persistence/)
-3. DTO de entrada y salida (application/ o presentation/)
-4. Servicio: interfaz + implementación (application/)
-5. Controlador REST (presentation/)
-6. Gestión de excepciones (@ControllerAdvice en infrastructure/)
-7. Tests unitarios del servicio
-8. Tests de integración del controlador (opcional)
+Implementa siempre en este orden:
+```text
+1. Modelo de dominio (`domain/model/`)
+2. DTOs y contratos (`domain/service/dto/`, `domain/repository/`)
+3. Servicio: interfaz + implementación (`domain/service/`, `domain/service/impl/`)
+4. Mapper (`mapper/`) si hace falta conversión
+5. Persistencia (`persistence/dao/...`, `persistence/repository/`)
+6. Controlador REST (`controller/`) si la funcionalidad expone HTTP
+7. Excepciones o validaciones compartidas (`exception/`, `domain/validation/`) si hacen falta
+8. Tests unitarios y de persistencia
 ```
 ---
-## Paso 1 — Entidad de dominio
-Crea la entidad JPA en `src/main/java/com/examencesar/domain/`:
+## Paso 1 — Modelo de dominio
+Crea el modelo en `src/main/java/com/examencesar/domain/model/`:
 ```java
-@Entity
-@Table(name = "<tabla>")
 public class <Entidad> {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(nullable = false)
     private String <campo>;
-    // getters y setters o usa Lombok @Data
 }
 ```
-**Verifica:** la clase tiene `@Entity`, tiene un `@Id`, los campos obligatorios llevan `@Column(nullable = false)`.
+**Verifica:** la clase representa el dominio y no depende de HTTP.
 ---
-## Paso 2 — Repositorio JPA
-Crea la interfaz en `src/main/java/com/examencesar/persistence/`:
+## Paso 2 — Contratos y DTOs
+Crea el contrato del repositorio en `src/main/java/com/examencesar/domain/repository/`:
 ```java
-@Repository
-public interface <Recurso>Repository extends JpaRepository<<Entidad>, Long> {
-    // finders adicionales si los necesitas
-    Optional<<Entidad>> findBy<Campo>(String <campo>);
+public interface <Recurso>Repository {
+    Optional<<Recurso>Dto> findById(Long id);
+    <Recurso>Dto save(<Recurso>Dto dto);
 }
 ```
-**Verifica:** extiende `JpaRepository`, los finders adicionales tienen nombre correcto (Spring Data los genera automáticamente).
----
-## Paso 3 — DTOs
-Crea los DTOs en `src/main/java/com/examencesar/application/` (o `presentation/`):
+Crea los DTOs en `src/main/java/com/examencesar/domain/service/dto/`:
 ```java
-// DTO de salida (respuesta al cliente)
 public record <Recurso>Dto(Long id, String <campo>) {}
-// DTO de entrada para crear
-public record Create<Recurso>Request(
-        @NotBlank(message = "El <campo> es obligatorio") String <campo>
-) {}
-// DTO de entrada para actualizar
-public record Update<Recurso>Request(
-        @NotBlank(message = "El <campo> es obligatorio") String <campo>
-) {}
 ```
-**Verifica:** los DTOs de entrada tienen anotaciones de Bean Validation, el DTO de salida no expone la entidad JPA directamente.
+**Verifica:** contratos y DTOs están en dominio, no en paquetes inventados.
 ---
-## Paso 4 — Servicio: interfaz e implementación
-### Interfaz en `src/main/java/com/examencesar/application/`:
+## Paso 3 — Servicio
+### Interfaz en `src/main/java/com/examencesar/domain/service/`:
 ```java
 public interface <Recurso>Service {
     List<<Recurso>Dto> findAll();
-    <Recurso>Dto findById(Long id);
-    <Recurso>Dto create(Create<Recurso>Request request);
-    <Recurso>Dto update(Long id, Update<Recurso>Request request);
-    void delete(Long id);
+    Optional<<Recurso>Dto> findById(Long id);
+    <Recurso>Dto create(<Recurso>Dto dto);
+    <Recurso>Dto update(<Recurso>Dto dto);
+    void deleteById(Long id);
 }
 ```
-### Implementación en `src/main/java/com/examencesar/application/impl/`:
+### Implementación en `src/main/java/com/examencesar/domain/service/impl/`:
 ```java
-@Service
-@Transactional
 public class <Recurso>ServiceImpl implements <Recurso>Service {
     private final <Recurso>Repository repository;
+
     public <Recurso>ServiceImpl(<Recurso>Repository repository) {
         this.repository = repository;
     }
-    @Override
-    public List<<Recurso>Dto> findAll() {
-        return repository.findAll().stream()
-                .map(this::toDto)
-                .toList();
-    }
-    @Override
-    public <Recurso>Dto findById(Long id) {
-        return repository.findById(id)
-                .map(this::toDto)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "<Recurso> con id " + id + " no encontrado"));
-    }
-    @Override
-    @Transactional
-    public <Recurso>Dto create(Create<Recurso>Request request) {
-        <Entidad> entity = new <Entidad>();
-        entity.set<Campo>(request.<campo>());
-        return toDto(repository.save(entity));
-    }
-    @Override
-    @Transactional
-    public <Recurso>Dto update(Long id, Update<Recurso>Request request) {
-        <Entidad> entity = repository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "<Recurso> con id " + id + " no encontrado"));
-        entity.set<Campo>(request.<campo>());
-        return toDto(repository.save(entity));
-    }
-    @Override
-    @Transactional
-    public void delete(Long id) {
-        if (!repository.existsById(id)) {
-            throw new ResourceNotFoundException("<Recurso> con id " + id + " no encontrado");
+}
+```
+**Verifica:** el servicio usa contratos de `domain/repository` y no depende del controlador.
+---
+## Paso 4 — Mapper
+Si hace falta conversión, crea un mapper en `src/main/java/com/examencesar/mapper/`:
+```java
+public class <Recurso>Mapper {
+    private static <Recurso>Mapper INSTANCE;
+
+    public static <Recurso>Mapper getInstance() {
+        if (INSTANCE == null) {
+            INSTANCE = new <Recurso>Mapper();
         }
-        repository.deleteById(id);
-    }
-    private <Recurso>Dto toDto(<Entidad> entity) {
-        return new <Recurso>Dto(entity.getId(), entity.get<Campo>());
+        return INSTANCE;
     }
 }
 ```
-**Verifica:** tiene `@Service`, `@Transactional`, inyección por constructor, devuelve DTOs (no entidades), lanza `ResourceNotFoundException` cuando el recurso no existe.
+**Verifica:** el mapper centraliza conversiones y no contiene lógica de negocio.
 ---
-## Paso 5 — Controlador REST
-Crea en `src/main/java/com/examencesar/presentation/`:
+## Paso 5 — Persistencia
+La persistencia se reparte en:
+
+- `src/main/java/com/examencesar/persistence/dao/jpa/entity/`
+- `src/main/java/com/examencesar/persistence/dao/jpa/impl/`
+- `src/main/java/com/examencesar/persistence/repository/`
+
+Ejemplo:
+```java
+public class <Recurso>RepositoryImpl implements <Recurso>Repository {
+    private final <Recurso>JpaDao <recurso>JpaDao;
+
+    public <Recurso>RepositoryImpl(<Recurso>JpaDao <recurso>JpaDao) {
+        this.<recurso>JpaDao = <recurso>JpaDao;
+    }
+}
+```
+**Verifica:** la implementación de persistencia queda fuera del dominio.
+---
+## Paso 6 — Controlador REST
+Si la funcionalidad expone HTTP, crea el controlador en `src/main/java/com/examencesar/controller/`:
 ```java
 @RestController
 @RequestMapping("/api/<recursos>")
 public class <Recurso>Controller {
     private final <Recurso>Service <recurso>Service;
-    public <Recurso>Controller(<Recurso>Service <recurso>Service) {
-        this.<recurso>Service = <recurso>Service;
-    }
-    @GetMapping
-    public List<<Recurso>Dto> findAll() {
-        return <recurso>Service.findAll();
-    }
-    @GetMapping("/{id}")
-    public <Recurso>Dto findById(@PathVariable Long id) {
-        return <recurso>Service.findById(id);
-    }
-    @PostMapping
-    public ResponseEntity<<Recurso>Dto> create(@RequestBody @Valid Create<Recurso>Request request) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(<recurso>Service.create(request));
-    }
-    @PutMapping("/{id}")
-    public <Recurso>Dto update(@PathVariable Long id, @RequestBody @Valid Update<Recurso>Request request) {
-        return <recurso>Service.update(id, request);
-    }
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
-        <recurso>Service.delete(id);
-        return ResponseEntity.noContent().build();
-    }
 }
 ```
-**Verifica:** `@RestController`, `@RequestMapping("/api/<recursos>")`, `@Valid` en parámetros de entrada, `POST` devuelve `201`, `DELETE` devuelve `204`.
+**Verifica:** el controlador delega y no accede a `persistence`.
 ---
-## Paso 6 — Gestión global de excepciones
-Si no existe, crea en `src/main/java/com/examencesar/infrastructure/exception/`:
-```java
-// Excepción de dominio
-public class ResourceNotFoundException extends RuntimeException {
-    public ResourceNotFoundException(String message) {
-        super(message);
-    }
-}
-// Handler global
-@RestControllerAdvice
-public class GlobalExceptionHandler {
-    @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleNotFound(ResourceNotFoundException ex) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(new ErrorResponse(ex.getMessage(), 404));
-    }
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorResponse> handleValidation(MethodArgumentNotValidException ex) {
-        String message = ex.getBindingResult().getFieldErrors().stream()
-                .map(FieldError::getDefaultMessage)
-                .collect(Collectors.joining(", "));
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(new ErrorResponse(message, 400));
-    }
-}
-// DTO de error
-public record ErrorResponse(String message, int status) {}
-```
----
-## Paso 7 — Tests unitarios del servicio
-Crea en `src/test/java/com/examencesar/application/`:
+## Paso 7 — Tests
+Tests unitarios del servicio en `src/test/java/com/examencesar/domain/service/impl/`:
 ```java
 @ExtendWith(MockitoExtension.class)
 class <Recurso>ServiceTest {
     @Mock
     private <Recurso>Repository repository;
+
     @InjectMocks
     private <Recurso>ServiceImpl service;
-    @Test
-    @DisplayName("findById devuelve el DTO cuando el recurso existe")
-    void findById_existingResource_returnsDto() {
-        // Given
-        <Entidad> entity = new <Entidad>();
-        entity.setId(1L);
-        entity.set<Campo>("<valor>");
-        given(repository.findById(1L)).willReturn(Optional.of(entity));
-        // When
-        <Recurso>Dto result = service.findById(1L);
-        // Then
-        assertThat(result.id()).isEqualTo(1L);
-        assertThat(result.<campo>()).isEqualTo("<valor>");
-    }
-    @Test
-    @DisplayName("findById lanza ResourceNotFoundException cuando el recurso no existe")
-    void findById_nonExistingResource_throwsException() {
-        // Given
-        given(repository.findById(99L)).willReturn(Optional.empty());
-        // When / Then
-        assertThatThrownBy(() -> service.findById(99L))
-                .isInstanceOf(ResourceNotFoundException.class);
-    }
 }
 ```
-**Verifica:** usa JUnit 5, Mockito con `given/willReturn`, AssertJ con `assertThat`, patrón Given/When/Then, `@DisplayName` descriptivo.
+Tests de persistencia en `src/test/java/com/examencesar/persistence/repository/`.
 ---
 ## Verificación final de cada paso
 Antes de marcar un paso como completado, comprueba:
-- [ ] ¿El código compila? (`./mvnw compile` sin errores o `./gradlew compileJava`)
+- [ ] ¿El código compila? (`./mvnw compile`)
 - [ ] ¿No hay imports sin usar?
-- [ ] ¿La clase está en el paquete correcto según su capa?
-- [ ] ¿Los tests del paso pasan? (`./mvnw test -Dtest=<NombreTest>`)
+- [ ] ¿La clase está en el paquete correcto según la estructura del proyecto?
+- [ ] ¿Los tests del paso pasan?

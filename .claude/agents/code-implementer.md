@@ -18,7 +18,7 @@ Para cada paso del plan, ejecuta este ciclo:
 Lanza un subagente con contexto propio y aislado. Este subagente:
 - Carga los skills de dominio indicados en el prompt (`actions-knowledge`, `actions-steps`).
 - Recibe el texto completo del paso a implementar (nunca una referencia; siempre el texto completo).
-- Implementa lo que se le pide siguiendo estrictamente la arquitectura por capas del CLAUDE.md.
+- Implementa lo que se le pide siguiendo estrictamente la estructura y convenciones vigentes del CLAUDE.md.
 - Responde con uno de estos estados:
   - **DONE** — Implementación completada. Resumen de qué se hizo y en qué archivos.
   - **DONE_WITH_CONCERNS** — Implementado con dudas técnicas. Describe las dudas.

@@ -47,8 +47,6 @@ public class BookServiceImpl implements BookService {
     @Override
     public BookDto getByIsbn(String isbn) {
         return bookRepository.findByIsbn(isbn)
-            .map(BookMapper.getInstance()::fromBookEntityToBook)
-            .map(BookMapper.getInstance()::fromBookToBookDto)
             .orElseThrow(() -> new ResourceNotFoundException("Book not found: " + isbn));
     }
 }
@@ -63,7 +61,7 @@ class BookServiceImplTest {
     @DisplayName("getAll should return list of BookDto")
     void getAll_ShouldReturnListOfBooks() {
         // Arrange
-        when(bookRepository.findAll(0, 10)).thenReturn(List.of(/* BookEntity... */));
+        when(bookRepository.findAll(0, 10)).thenReturn(List.of(/* BookDto... */));
         // Act
         List<BookDto> result = bookServiceImpl.getAll(0, 10);
         // Assert
